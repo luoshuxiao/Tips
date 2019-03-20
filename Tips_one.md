@@ -66,7 +66,7 @@
 ![重构repr后对象显示结果.png](https://upload-images.jianshu.io/upload_images/14977853-93c286ad5ec83e2a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 # 二十七： 数据库的存储过程
-# 二十六：数据库删除操作：
+# 二十六：数据库删除操作（谨慎使用）：
         -- 删除数据库： drop database if exists 数据库名；
         -- 删除表：drop table 表名字 （完全删除去掉整张表）；
         -- 删除表：delete from 表名 （删除表里面的数据，一行一行的删除，表明后面可以跟where 字段名= 值，
