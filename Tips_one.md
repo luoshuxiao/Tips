@@ -345,28 +345,21 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
 
 ### 列表1.append（a） 和列表1.extend（a）的区别： 
 
-                append是添加元素到列表1（将添加的元素作为整体，列表1的一个元素）
-                extend是添加列表到列表1（将添加的元素分开，可以作为列表1的多个元素）
-                                            
-
-					a =  [1,2,3,4]
+          append: 添加对象到列表1（将添加的对象作为列表1的一个元素）
+          extend: 添加元素到列表1（将添加的对象中的元素添加到列表1）
+					a =  [1,2,3,4]      
 					b =  [5,6,7,8]
-					a.append(b)
-					print(a)
-					a =  [1,2,3,4]
-					b =  [5,6,7,8]
-					a.extend(b)
-					print(a)
+					a.append(b)   # a: [1,2,3,4,[5,6,7,8]]
+                    a =  [1,2,3,4] 
+                    a.extend(b)  # a: [1,2,3,4,5,6,7,8]			
 
 ### 将[[1,2],[3,4],[5,6]]一行代码展开该列表,得出[1,2,3,4,5,6]
 			a= [[1, 2], [3, 4], [5, 6]]
 			b= [j for i in a for j in i]
-			print(b)
 ## 2. 元祖（tuple） --  不可变，有序  --   小括号()
              注意： 当元祖只有一个元素时，要加逗号
                    a = (1)  ---   a变量类型是int类型
                    b = (1,)  ---  b变量类型是tuple类型
-
 
 			  获取元素 -  通过下标获取元素
 			              变量1，变量2 = （元素1，元素2）
@@ -380,25 +373,21 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
 			   改  ：字典[key]  = 值
 			   c. 相关运算 ：in /not in ,len() ,dict() ,
 			          max() : 取的是字典的key的最小值 ,key类型需要一样
-			          min()  ：取的是字典的key的最小值 ,key类型需要一样
+			          min() ：取的是字典的key的最小值 ,key类型需要一样
 ## 4. 集合 （set)  --  可变、无序  --大括号{}
               a. 查--获取集合元素 ： 不能单独获取某个元素，只能遍历
 			  b. 增 （添加元素）： 集合.add(元素) --  将制定元素添加到集合中
 			                  集合.update(序列) --  将序列中的元素添加到集合中（序列中的元素必须是不可变的）
-			
 			  c. 删 （删除元素）：  集合.remove(元素)   --  删除集合中指定的元素
-			
 			  d.   in / not in  ,max ,min, len ,set
-
               e.数学运算：包含（>=,<=）,并集（|）,交集（&），补集（^）,差集（-）
 
-## 5. 字符串（str）-- 不可变、 有序--两个单引号''
+## 5. 字符串（str）-- 不可变、 有序--两个单引号''或者双引号
           a.获取元素  -- 通过下标获取元素
           b. 字符串切片：字符串1[:] 
           c. 相关运算 ：+ ，* ，in /not in ,len() ,str() ,max() ,min()
           d.转义字符：\n,\t,\',\
           e.阻止转义：r/R
-          
        
 # 十三：python中的三目运算符： 
       python中的三目运算符：  值1  if  条件语句 else 值2 
@@ -520,7 +509,7 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
 	>>> {chr(i) for i in range(32, 256) if 'SIGN' in name(chr(i), '')}
 	{'×', '¥', '°', '£', '', '#', '¬', '%', 'µ', '>', '¤', '±', '¶', '§', '<', '=', '', '$', '÷', '¢', '+'}
 
-# 六: 分布式、高并发、多线程
+# 六: 分布式、高并发
 # 五： 字符串格式化-- format函数 （菜鸟教程）
 
 功能： a.代替占位符： f'{a}任意字符{b}' -- 等同于--> '%s任意字符%s' %(a,b)
@@ -561,92 +550,8 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
     a. 栈区（stack）— 由编译器自动分配释放 ，存放函数的参数名，局部变量的名等。其操作方式类
           似于数据结构中的栈，只能在栈顶做插入和删除操作。
     b. 堆区（heap）— 由程序员分配释放， 若程序员不释放，程序结束时可能由OS回收。注意它与数据结构中的堆是两回事，分配方式倒是类似于链表。
-       python实现堆栈结构：
-		class Stack(object):
+       python实现堆栈结构的代码放在github:https://github.com/luoshuxiao/basic-python-/tree/master/python%E5%AE%9E%E7%8E%B0%E5%85%B8%E5%9E%8B%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84
 		
-		    def __init__(self, maxsize):
-		        self.s_list = []
-		        self.maxsize = maxsize
-		
-		    def push_element(self, data):
-		        """
-		        压栈（压入数据）
-		        :param data: 数据
-		        :return:
-		        """
-		        if self.current_size() < self.maxsize:
-		            return self.s_list.append(data)
-		
-		    def pop_element(self):
-		        """
-		        弹栈（取出数据）
-		        :return:
-		        """
-		        if self.s_list:
-		            element = self.s_list[0]
-		            self.s_list.remove(self.s_list[0])
-		            return element
-		        else:
-		            return None
-		
-		    def select_data(self, data):
-		        """
-		        获取目标数据在该容器中的下标
-		        :param data: 目标数据
-		        :return: 元素是下标的列表（可能有多个符合条件的下标）
-		        """
-		        index_list = []
-		        for i in self.s_list:
-		            if i == data:
-		                index_list.append(self.s_list.index(i))
-		        return index_list
-		
-		    def select_index(self, num):
-		        """
-		        通过下标获取数据
-		        :param num: 目标数据的下标
-		        :return: 目标数据
-		        """
-		        if 0 <= num < self.maxsize:
-		            return self.s_list[num]
-		        else:
-		            return None
-		
-		    def current_size(self):
-		        """
-		        获取当前堆栈的数据大小（数据个数）
-		        :return: 数据的个数（int类型）
-		        """
-		        return len(self.s_list)
-		
-		    def __repr__(self):
-		        return str(self.s_list)
-		
-		
-		def main_test():
-		    stack1 = Stack(5)  # 创建一个宽度为5的堆栈数据结构对象
-		    stack1.push_element(1)
-		    print(f'此时堆栈为：{stack1.s_list}')
-		    stack1.push_element(2)
-		    print(f'此时堆栈为：{stack1.s_list}')
-		    stack1.push_element(3)
-		    print(f'此时堆栈为：{stack1.s_list}')
-		    stack1.push_element(4)
-		    print(f'此时堆栈为：{stack1.s_list}')
-		    stack1.push_element(5)
-		    print(f'此堆栈刚满，堆栈为：{stack1.s_list}')
-		    print(stack1.current_size())
-		    print(f'此时堆栈为：{stack1.s_list}')
-		    stack1.push_element(4)
-		    stack1.push_element(4)
-		    print(f'此堆栈满了后，再压入元素后，堆栈为：{stack1.current_size()}')
-		    print(f'第一次取出元素：{stack1.pop_element()}')
-		    print(f'第二次取出元素：{stack1.pop_element()}')
-		    print(f'取出两个元素后：{stack1.s_list}')
-		
-		
-		if __name__ == '__main__':
-		    main_test()
 
 ### 2. 队列 (QUEUE)  -- 先进先出(FIFO) --
     类似超市排队结账，先排先结账，后排对的后结账，队列只能在队头做删除操作,在队尾做插入操作
@@ -660,200 +565,8 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
 
     优点： 增加、删除节点等效率比线性表高很多，只需要对指针做更改，不需要对后面的节点做更改
     缺点： 定位元素时只能拿到头head，要遍历，没有线性表速度快
-    python实现链表数据结构
-		class Node(object):
-		    """声明节点类"""
-		    def __init__(self, data):
-		        self.data = data
-		        self.next = None
+    python实现链表数据结构放在github:https://github.com/luoshuxiao/basic-python-/tree/master/python%E5%AE%9E%E7%8E%B0%E5%85%B8%E5%9E%8B%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84
 		
-		    def __repr__(self):
-		        return str(self.data)
-		
-		
-		class LinkedList(object):
-		
-		    def __init__(self, node):
-		        self.head = node
-		
-		    def append_element(self, data):
-		        """
-		        在链表最后添加节点
-		        :param data: 节点的数据
-		        :return:
-		        """
-		        node = Node(data)
-		        last_node = self.head
-		        while last_node.next:
-		            last_node = last_node.next
-		        last_node.next = node
-		
-		    def insert_by_index(self, data, index):
-		        """
-		        通过下标插入节点
-		        :param data: 节点的数据
-		        :param index: 插入目标节点的下标
-		        :return:
-		        """
-		        node = Node(data)
-		        if type(index) is int:
-		            if index == 0:
-		                behind_node = self.head
-		                self.head = node
-		                self.head.next = behind_node
-		            elif 0 < index < self.get_size():
-		                before_node = self.head
-		                for _ in range(index-1):
-		                    before_node = before_node.next
-		                behind_node = before_node.next
-		                before_node.next = node
-		                node.next = behind_node
-		            else:
-		                print('下标越界，插入失败')
-		        else:
-		            print('下标输入有误,插入失败')
-		
-		    def insert_by_data(self, insert_data, exist_data):
-		        """
-		        通过指定的数据插入节点
-		        :param insert_data: 需要插入的节点的数据值
-		        :param exist_data: 插入链表中指定的目标节点的数据值
-		        :return:
-		        """
-		        index_list = self.get_index(exist_data)
-		        if not index_list:
-		            print('该链表未找到您指定的数据，插入失败')
-		            return None
-		        index_l = [index_list[i]+i for i in range(len(index_list))]
-		        for i in index_l:
-		            self.insert_by_index(insert_data, i)
-		
-		    def remove_by_data(self, data):
-		        """
-		        通过节点的数据值删除节点
-		        :param data: 要删除节点的数据值
-		        :return:
-		        """
-		        before_node = self.head
-		        while before_node:
-		            if before_node.data == data:
-		                index = self.get_index(data)
-		                index_list = [index[i]-i for i in range(len(index))]
-		                for i in index_list:
-		                    self.remove_by_index(i)
-		                break
-		            before_node = before_node.next
-		        else:
-		            print(f'该链表没有与数据：{data}，匹配的节点，删除失败')
-		            return None
-		
-		    def remove_by_index(self, index):
-		        """
-		        通过下标删除节点
-		        :param index: 待删除节点的下标
-		        :return:
-		        """
-		        before_node = self.head
-		        size = self.get_size()
-		        if type(index) is int:
-		            if index == 0:
-		                self.head = self.head.next
-		                return 1
-		            elif 0 < index < size:
-		                for i in range(index - 1):
-		                    before_node = before_node.next
-		                behind_node = before_node.next.next
-		                before_node.next = behind_node
-		                return 1
-		            else:
-		                print('下标越界,删除失败')
-		                return 0
-		        else:
-		            print('下标输入有误,删除失败')
-		
-		    def get_data(self, index):
-		        """
-		        通过下标获取目标节点的数据值
-		        :param index: 目标节点的下标
-		        :return: 节点的数据值
-		        """
-		        if type(index) is int:
-		            if index == 0:
-		                return self.head.data
-		            if 0 < index < self.get_size():
-		                node = self.head
-		                for _ in range(index):
-		                    node = node.next
-		                return node.data
-		            else:
-		                print('下标超出范围，获取节点数据失败')
-		        else:
-		            print('请输入int类型下标')
-		
-		    def get_index(self, data):
-		        """
-		        通过指定的节点数据值获取节点的下标
-		        :param data: 目标节点的数据值
-		        :return: 元素是目标节点下标的列表（可能存在多个下标）
-		        """
-		        node = self.head
-		        index_list = []
-		        for i in range(self.get_size()):
-		            if node.data == data:
-		                index_list.append(i)
-		            node = node.next
-		        if not index_list:
-		            print(f'此链表并无与{data}相等的节点，获取节点下标失败')
-		        return index_list
-		
-		    def get_size(self):
-		        """
-		        获取当前链表的宽度（链表节点的个数）
-		        :return: 链表的宽度（int类型）
-		        """
-		        node = self.head
-		        size = 0
-		        while node:
-		            node = node.next
-		            size += 1
-		        return size
-		
-		    def __repr__(self):
-		        node = self.head
-		        list_data = []
-		        while node:
-		            list_data.append(node.data)
-		            node = node.next
-		        return str(list_data)
-		
-		
-		def main_test():
-		    head = Node(4)
-		    link = LinkedList(head)
-		    # link.append_element(6)
-		    # link.append_element(12)
-		    # link.append_element(300)
-		    # link.append_element(6)
-		    # print(link)
-		    # # print(link.get_size())
-		    # print(link.get_index(6))
-		    # # print(link.get_data(0))
-		    # # link.remove_by_data(6)
-		    # # print(link)
-		    # # link.remove_by_index(1)
-		    # # print(link)
-		    # link.insert_by_index(44444, 0)
-		    # print(link)
-		    # # link.insert_by_index(33333, 2)
-		    # # print(link)
-		    link.insert_by_data(33333, 6)
-		    print(link)
-		
-		
-		if __name__ == '__main__':
-		   main_test()
-
-
 
 # 三：  装饰器：一个闭包，把一个函数当做参数返回 一个替代版的函数，本质上就是一个返回函数的函数 (被装饰的函数名会变成装饰器的名字，不在是原来的名字)
 
