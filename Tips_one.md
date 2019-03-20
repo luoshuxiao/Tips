@@ -1,6 +1,4 @@
-# 三十三： python中万物之初：object基类
-# 三十二： django框架model层中的Q/F函数
-# 三十一： TCP和UDP区别
+# 三十： TCP和UDP区别
 ### 1. 区别 
 	   a. 建立连接方面： TCP在数据传输之前，客户端和服务器会建立通信连接后再数据传输，
 	                    而UDP不会建立连接，直接传输数据；
@@ -23,8 +21,14 @@
            等文件传输协议，POP、SMTP等邮件传输协议，如浏览器用的HTTP FlashFXP，FTP Outlook，POP、
            SMTP Putty，Telnet、SSH QQ文件传输 ；
     UDP -- 对网络通讯质量要求不高，但是对通讯速度要求快，如QQ语音、视频TFTP等等。
-# 三十： MVC / MVT / MVP / MVVM
-# 二十九：\_\_str\__和\_\_repr\_\_函数
+# 二十九： MVC / MVT / MVP / MVVM
+### 1. MVC -- Model Views Controller -- 模型层、模板层、视图函数
+### 2. MVT -- Model Views Templates -- 模型层、视图函数、模板层 
+### 3. MVP -- Model Views Presenter -- 模型层、模板层、视图函数（contrller/Presenter）
+### 4. MVVM -- Model Views ViewsModel -- 模型层、模板层、视图函数
+      将views和状态和抽象化，视图UI和业务逻辑分开，viewsmodel可以取出 Model 的数据同时帮忙处
+      理 View 中由于需要展示内容而涉及的业务逻辑。
+# 二十八：\_\_str\__和\_\_repr\_\_函数
 **两个函数都是object基类中定义用于表达输出结果的魔法函数，开发者可自行重构，但是重构后返回类型必须要是str类型**
 
 应用举例：比方说，现在我想要创建一个类，用来表示人，实例化出一个人的对象，我想用人的名字来代表这个人。直接打印这个对象就输出他的名字，而不是打印他的名字属性才输出名字，如何实现？
@@ -61,41 +65,7 @@
 ![重构str后对象的显示结果.png](https://upload-images.jianshu.io/upload_images/14977853-1672ab5bd14fc8a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![重构repr后对象显示结果.png](https://upload-images.jianshu.io/upload_images/14977853-93c286ad5ec83e2a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-# 二十八： 数据库的存储过程
-# 二十七： NumPy与Pandas：
-## 1.numpy: 适合处理统一的数值数组数据 -- numpy.array
-## 2. pandas: 专门处理表格和混杂数据设计的 -- pandas.Series/pandas.DataFrame
-  **两个主要的数据结构：Series和DataFrame**
-### a. Series -- 类似一维数组对象，由一组数据和一组与之相关的数据标签（索引）组成；
-	   1)创建Series带有一个可以对各个数据点进行标记的索引，比如下面的对象：
-	     obj = pd.Series([1,2,4,5], index=['a','b','c','d'])
-	     当然也可以使用默认的数字索引，即0,1,2,3,4...
-	       obj['a'] 等同于obj[0]
-	   2)Series看成是一个定长的有序的字典对象，可以通过字典直接创建Series对象,
-            key为索引，value为数据
-	      sdata = {'a':1,'b':2,'c':3}
-	      obj1 = pd.Series(sdata)
-	   3）通过已有的Series对象，创建新的Series对象
-	      obj2 = pd.Series(sdata,index=['a','b','d','g'])
-	      原有的索引对应的值复制到新建的对象，原来没有的索引对应的值为NaNt
-	      NaN（not a number） -- 表示缺失或者NA值
-	   4）Series最重要的一个功能是根据运算的索引自动对齐数据进行运算
-	       obj3 = obj1 + obj2  （必须对应位置上两个对象都有值才相加，
-                                 其中一个为NaN，结果为NaN）
-	       obj3输出为：
-		        a  2
-				b  4
-				c  NaN
-				d  NaN
-				g  NaN
-	    pd.isnull(obj) -- 检测是否缺失数据（每个数据对应返回bool值，缺失则返回True）
-	    pd.notnull(obj) -- 检测是否缺失数据（每个数据对应返回bool值，不缺失则返回True）
-	    obj.name = 'obj_name' -- 给Series对象的数据name属性赋值
-	    obj.index.name = 'index_name' -- 给Series对象的索引的name属性赋值
-	    obj.index = ['bob','steve','jeff','ryan'] -- 直接修改索引的名字
-
-### b. DataFrame -- 表格型的数据结构，含有一组有序的列，每一列可以是不同的值类型（数值，字符串，布尔值等等），DataFrame既有行索引也有列索引
-     
+# 二十七： 数据库的存储过程
 # 二十六：数据库删除操作：
         -- 删除数据库： drop database if exists 数据库名；
         -- 删除表：drop table 表名字 （完全删除去掉整张表）；
@@ -106,6 +76,7 @@
 
        一般来说：执行速度-->drop>truncate>delete
        使用foreign key约束的表，不能用truncate，应使用不带where的delete
+
 # 二十五 : GET和POST的区别：
 **本质上来说，GET和POST请求都是TCP链接，TCP/IP都是HTTP的底层协议，它们两做的事情都是一样的，没有区别的，**
 **但是由于HTTP协议或者浏览器、服务器对GET和POST的规定，让POST和GET不一样，这种不一样主要体现在以下三点：**
@@ -188,8 +159,11 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
 对于需要频繁新增记录的表，最好不要创建索引，没有索引的表，执行insert、append都很快，有了索引以后，会多一个维护索引的操作，一些大表可能导致insert速度很慢。
 
 # 二十二 ：django+nginx+uWSGI工作原理
+   web服务器架构简述：
+      用户请求-> 域名解析层（DNS）-> web服务层（Nginx，Apacha等）-> 应用服务层（uWGSI-django等）-> 数据库层（mysql-orcal等）-> 存储层（光纤存储磁盘等，很少有，贵）
 
-	客户端请求服务器资源，发送请求
+   架构流程：
+	客户端请求服务器资源，发送请求，DNS域名解析层解析域名，给Nginx分配ip（默认轮询分配）
 	nginx作为直接对外的服务接口，接收到客户端发送过来的请求，会解包，分析
 	如果是静态文件请求就根据nginx配置的静态文件目录，返回请求的资源
 	如果是动态的请求，nginx就通过配置文件，将请求传递给uWSGI；uWSGI将接受到的包进行处理，并转发给wsgi，
@@ -210,7 +184,7 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
 		      b.高度的模块化和只有软件许可证使第三方模块层出不穷；
 		      c.Nginx是一个跨平台的服务器，可以运行在linux,windows,freebsd,solaris,aix,mac os等操作系统；
 		      d.极大的稳定性；
-### 2.正、反向代理/负载均衡
+### 2.正、反向代理/负载均衡/'
     a. 正向代理：客户端非常明确要访问的服务器地址，但是并不能直接去访问，需要通过代理服务器，间接访问目标服务器，
                 正向代理模式屏蔽或者萤火虫那个人真实客户端信息，所以目标服务器只知道请求来自哪个代理服务器但是并
                 不知道具体的那个客户端；
@@ -227,8 +201,9 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
 
     更多的公司考虑到成本原因，会选择使用软件负载均衡，它是利用现有的技术结合主机硬件实现的一种消息队列分发机制。
     d.Nginx支持的负载均衡的调度算法方式:
-      1）weight轮询（默认）：给每个后端服务器设置权重值（weight），用于调整不同服务器上请求的分配率，权重大，
-                          几率大，权重值主要针对实际工作中不同的后端服务器的硬件配置进行调整的
+      1）weight轮询（默认）：每个后端服务器都有一个接受请求的权重值（weight），默认情况下权重相同，当调整不
+                           同服务器上请求的权重值后，权重大，几率大，权重值主要针对实际工作中不同的后端服务器的
+                           硬件配置进行调整的，一般情况下不修改权重，因为一般服务器硬件都是相同的；
       2）ip_hash:按照每个请求ip地址的hash结果分配，这个算法每个ip地址的客户端总会访问同一个服务器，这在一定
                  程度上解决了集群部署环境下的session共享问题；
       3）fair:智能调度算法，动态的根据后端服务器请求处理的响应时间、处理效率来分配请求，结合了以上两种方法的优
@@ -304,10 +279,13 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
 # 十七 ：python对象：
 **--> python是基于C语言开发，面向对象的动态语言，对于对象有一种通俗的说法，叫做万物皆对象，意思就是构造的任何数据类型都是一个对象，数字，字符串，函数，甚至是python模块都当做是对象处理**
 ## 1. 对象的三个属性：身份、类型和值
+**object是所有类的基类，在object中定义了对象就有这三个属性**
     身份：也就是id   --> id(对象)   身份是对象的唯一标识
     类型：也就是数据类型 --> type(对象) 决定了该对象可以保存什么类型的值
     值： 也就是对象对应的值 --> print(对象) 就是该对象表示的值
-    注意： 每个对象都会记录着引用自己的对象的个数，即引用计数。
+    注意： 每个对象都会记录着引用自己的对象的个数，即引用计数，
+          并且有一个或多个“Bases”（One or more bases）：不是所有对象都有Bases，但一些特殊的对象会有，比如：类。
+          Bases类似于面向对象语言中的“基类”，“超类”，对象的名字和对象的这三个属性是没有存储在一个地址的。
     查看引用计数：导入sys模块，使用gettrefcount(对象)，由于这个本身也是一个应用，所以这个对象引用计数结果一定大于1。
 ## 2. 可变和不可变对象：
     可变对象：列表、字典、集合
@@ -394,7 +372,7 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
 			              变量1，变量2 = （元素1，元素2）
 			              变量1，*变量2 = （元素1，元素2，元素3......）
 			  相关运算 ：+ ，* ，in /not in ,len() ,tuple() ,max() ,min()
-## 3.  字典 （dict） --  可变，无序  --  大括号{}
+## 3.  字典 （dict） --  可变，有序  --  大括号{}
 			   a.获取元素  -- 通过键获取元素
 			   b.增删改
 			   增  ： 字典[key] = 值 ， 字典1.update（字典2）， 字典1.setdefault(key,值)
@@ -578,11 +556,100 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
 	3.14
 
 # 四： 四种典型数据结构 -- 堆栈、队列、线性表/顺序表、链表
-### 1. 堆栈（Stack） -- 先进后出(FILO) -- 
+### 1. 堆栈（Stack，就是栈的别名） -- 先进后出(FILO) -- 
     类似往杯子里苹果，先放进去的要后拿出来，放进去的动作叫压栈，拿出来叫弹栈
-    python实现堆栈结构：
+    a. 栈区（stack）— 由编译器自动分配释放 ，存放函数的参数名，局部变量的名等。其操作方式类
+          似于数据结构中的栈，只能在栈顶做插入和删除操作。
+    b. 堆区（heap）— 由程序员分配释放， 若程序员不释放，程序结束时可能由OS回收。注意它与数据结构中的堆是两回事，分配方式倒是类似于链表。
+       python实现堆栈结构：
+		class Stack(object):
+		
+		    def __init__(self, maxsize):
+		        self.s_list = []
+		        self.maxsize = maxsize
+		
+		    def push_element(self, data):
+		        """
+		        压栈（压入数据）
+		        :param data: 数据
+		        :return:
+		        """
+		        if self.current_size() < self.maxsize:
+		            return self.s_list.append(data)
+		
+		    def pop_element(self):
+		        """
+		        弹栈（取出数据）
+		        :return:
+		        """
+		        if self.s_list:
+		            element = self.s_list[0]
+		            self.s_list.remove(self.s_list[0])
+		            return element
+		        else:
+		            return None
+		
+		    def select_data(self, data):
+		        """
+		        获取目标数据在该容器中的下标
+		        :param data: 目标数据
+		        :return: 元素是下标的列表（可能有多个符合条件的下标）
+		        """
+		        index_list = []
+		        for i in self.s_list:
+		            if i == data:
+		                index_list.append(self.s_list.index(i))
+		        return index_list
+		
+		    def select_index(self, num):
+		        """
+		        通过下标获取数据
+		        :param num: 目标数据的下标
+		        :return: 目标数据
+		        """
+		        if 0 <= num < self.maxsize:
+		            return self.s_list[num]
+		        else:
+		            return None
+		
+		    def current_size(self):
+		        """
+		        获取当前堆栈的数据大小（数据个数）
+		        :return: 数据的个数（int类型）
+		        """
+		        return len(self.s_list)
+		
+		    def __repr__(self):
+		        return str(self.s_list)
+		
+		
+		def main_test():
+		    stack1 = Stack(5)  # 创建一个宽度为5的堆栈数据结构对象
+		    stack1.push_element(1)
+		    print(f'此时堆栈为：{stack1.s_list}')
+		    stack1.push_element(2)
+		    print(f'此时堆栈为：{stack1.s_list}')
+		    stack1.push_element(3)
+		    print(f'此时堆栈为：{stack1.s_list}')
+		    stack1.push_element(4)
+		    print(f'此时堆栈为：{stack1.s_list}')
+		    stack1.push_element(5)
+		    print(f'此堆栈刚满，堆栈为：{stack1.s_list}')
+		    print(stack1.current_size())
+		    print(f'此时堆栈为：{stack1.s_list}')
+		    stack1.push_element(4)
+		    stack1.push_element(4)
+		    print(f'此堆栈满了后，再压入元素后，堆栈为：{stack1.current_size()}')
+		    print(f'第一次取出元素：{stack1.pop_element()}')
+		    print(f'第二次取出元素：{stack1.pop_element()}')
+		    print(f'取出两个元素后：{stack1.s_list}')
+		
+		
+		if __name__ == '__main__':
+		    main_test()
+
 ### 2. 队列 (QUEUE)  -- 先进先出(FIFO) --
-    类似超市排队结账，先排先结账，后排对的后结账
+    类似超市排队结账，先排先结账，后排对的后结账，队列只能在队头做删除操作,在队尾做插入操作
 ### 3. 线性表/顺序表（List/SequenceList）-- 
     连续存放，用索引定位元素（类似python中的list）
     缺点：当插入或者删除、添加操作等，性能较差，比如插入时，后面的元素都要往后挪动，
@@ -593,7 +660,199 @@ mysql官方对于索引的定义为：索引是帮助mysql高效获取数据的�
 
     优点： 增加、删除节点等效率比线性表高很多，只需要对指针做更改，不需要对后面的节点做更改
     缺点： 定位元素时只能拿到头head，要遍历，没有线性表速度快
-    python实现链表结构：
+    python实现链表数据结构
+		class Node(object):
+		    """声明节点类"""
+		    def __init__(self, data):
+		        self.data = data
+		        self.next = None
+		
+		    def __repr__(self):
+		        return str(self.data)
+		
+		
+		class LinkedList(object):
+		
+		    def __init__(self, node):
+		        self.head = node
+		
+		    def append_element(self, data):
+		        """
+		        在链表最后添加节点
+		        :param data: 节点的数据
+		        :return:
+		        """
+		        node = Node(data)
+		        last_node = self.head
+		        while last_node.next:
+		            last_node = last_node.next
+		        last_node.next = node
+		
+		    def insert_by_index(self, data, index):
+		        """
+		        通过下标插入节点
+		        :param data: 节点的数据
+		        :param index: 插入目标节点的下标
+		        :return:
+		        """
+		        node = Node(data)
+		        if type(index) is int:
+		            if index == 0:
+		                behind_node = self.head
+		                self.head = node
+		                self.head.next = behind_node
+		            elif 0 < index < self.get_size():
+		                before_node = self.head
+		                for _ in range(index-1):
+		                    before_node = before_node.next
+		                behind_node = before_node.next
+		                before_node.next = node
+		                node.next = behind_node
+		            else:
+		                print('下标越界，插入失败')
+		        else:
+		            print('下标输入有误,插入失败')
+		
+		    def insert_by_data(self, insert_data, exist_data):
+		        """
+		        通过指定的数据插入节点
+		        :param insert_data: 需要插入的节点的数据值
+		        :param exist_data: 插入链表中指定的目标节点的数据值
+		        :return:
+		        """
+		        index_list = self.get_index(exist_data)
+		        if not index_list:
+		            print('该链表未找到您指定的数据，插入失败')
+		            return None
+		        index_l = [index_list[i]+i for i in range(len(index_list))]
+		        for i in index_l:
+		            self.insert_by_index(insert_data, i)
+		
+		    def remove_by_data(self, data):
+		        """
+		        通过节点的数据值删除节点
+		        :param data: 要删除节点的数据值
+		        :return:
+		        """
+		        before_node = self.head
+		        while before_node:
+		            if before_node.data == data:
+		                index = self.get_index(data)
+		                index_list = [index[i]-i for i in range(len(index))]
+		                for i in index_list:
+		                    self.remove_by_index(i)
+		                break
+		            before_node = before_node.next
+		        else:
+		            print(f'该链表没有与数据：{data}，匹配的节点，删除失败')
+		            return None
+		
+		    def remove_by_index(self, index):
+		        """
+		        通过下标删除节点
+		        :param index: 待删除节点的下标
+		        :return:
+		        """
+		        before_node = self.head
+		        size = self.get_size()
+		        if type(index) is int:
+		            if index == 0:
+		                self.head = self.head.next
+		                return 1
+		            elif 0 < index < size:
+		                for i in range(index - 1):
+		                    before_node = before_node.next
+		                behind_node = before_node.next.next
+		                before_node.next = behind_node
+		                return 1
+		            else:
+		                print('下标越界,删除失败')
+		                return 0
+		        else:
+		            print('下标输入有误,删除失败')
+		
+		    def get_data(self, index):
+		        """
+		        通过下标获取目标节点的数据值
+		        :param index: 目标节点的下标
+		        :return: 节点的数据值
+		        """
+		        if type(index) is int:
+		            if index == 0:
+		                return self.head.data
+		            if 0 < index < self.get_size():
+		                node = self.head
+		                for _ in range(index):
+		                    node = node.next
+		                return node.data
+		            else:
+		                print('下标超出范围，获取节点数据失败')
+		        else:
+		            print('请输入int类型下标')
+		
+		    def get_index(self, data):
+		        """
+		        通过指定的节点数据值获取节点的下标
+		        :param data: 目标节点的数据值
+		        :return: 元素是目标节点下标的列表（可能存在多个下标）
+		        """
+		        node = self.head
+		        index_list = []
+		        for i in range(self.get_size()):
+		            if node.data == data:
+		                index_list.append(i)
+		            node = node.next
+		        if not index_list:
+		            print(f'此链表并无与{data}相等的节点，获取节点下标失败')
+		        return index_list
+		
+		    def get_size(self):
+		        """
+		        获取当前链表的宽度（链表节点的个数）
+		        :return: 链表的宽度（int类型）
+		        """
+		        node = self.head
+		        size = 0
+		        while node:
+		            node = node.next
+		            size += 1
+		        return size
+		
+		    def __repr__(self):
+		        node = self.head
+		        list_data = []
+		        while node:
+		            list_data.append(node.data)
+		            node = node.next
+		        return str(list_data)
+		
+		
+		def main_test():
+		    head = Node(4)
+		    link = LinkedList(head)
+		    # link.append_element(6)
+		    # link.append_element(12)
+		    # link.append_element(300)
+		    # link.append_element(6)
+		    # print(link)
+		    # # print(link.get_size())
+		    # print(link.get_index(6))
+		    # # print(link.get_data(0))
+		    # # link.remove_by_data(6)
+		    # # print(link)
+		    # # link.remove_by_index(1)
+		    # # print(link)
+		    # link.insert_by_index(44444, 0)
+		    # print(link)
+		    # # link.insert_by_index(33333, 2)
+		    # # print(link)
+		    link.insert_by_data(33333, 6)
+		    print(link)
+		
+		
+		if __name__ == '__main__':
+		   main_test()
+
 
 
 # 三：  装饰器：一个闭包，把一个函数当做参数返回 一个替代版的函数，本质上就是一个返回函数的函数 (被装饰的函数名会变成装饰器的名字，不在是原来的名字)
