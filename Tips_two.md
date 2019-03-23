@@ -1,3 +1,36 @@
+# 四十三： python常用内置函数
+# 四十二： python实现socket通信
+# 四十一： 读写exel文件:xlrd/xlwt和openpyxl
+# 四十： django异步请求框架：celery
+# 三十九： 发布系统设计
+# 三十八： 定时任务：crontab -e 
+# 三十七： python是如何寻找包的,如何执行linux命令？
+**python内置的os模块能实现基本的操作系统功能**
+
+	os.sep -- 可以取代操作系统特定的路径分隔符，比如windows下为'\\\'；
+	os.name -- 获取你正在使用的系统平台，‘nt’代表windows,'posix'代表linux/unix；
+	os.getcwd() -- 返回当前python脚本工作的目录路径；
+	os.getenv() -- 获取一个环境变量，如果没有则返回none;
+	os.putenv(key,value) -- 设置一个环境变量；
+	os.listdir(path) -- 返回 path路径下所有文件和目录名（列表）；
+	os.remove(path) -- 删除一个文件；
+	os.system(command) -- 运行shell命令（linux等）；
+	os.linesep -- 获取当前平台使用的行终止符，windows使用‘\r\n’,linux使用‘\n’，Mac使用‘\r’;
+	os.curdir -- 获取当前目录；
+	os.chdir(dirname) -- 改变工作目录到dirname路径；
+	
+	os.path的相关用法：
+		os.path.isfile(path) --  判断是否是文件，是文件返回True,是目录返回False
+		os.path.isdir(path) -- 判断是否是目录,是目录返回True,是文件返回False
+		os.path.exists(path) -- 判断path是否有效
+		os.path.getsize(path) -- 返回文件大小，如果是目录返回OL
+		os.path.abspath(__file__) -- 返回绝对路径
+		os.path.normpath(path) -- 返回path的标准规范格式 
+		os.path.split(path) -- 将path分割成目录和文件名，返回元祖
+		os.path.splittext() -- 分离文件名和扩展名
+		os.path.join(path,name) -- 将目录path和文件名name用‘\’连接
+		os.path.basename(__file__) -- 返回当前文件的文件名
+		os.path.dirname(__file__) -- 返回当前文件上级目录
 # 三十六： 2，8，10，16进制数之间的转换：
 ### 1. 将任意进制数转换为2进制数： bin() --
       bin(10)  -->  0b1010
@@ -11,8 +44,7 @@
 ### 4. 将任意进制数转换成16进制数：  hex() --
       hex(10) -- > 0xa
 # 三十五： python内置模块： collections
-** from collections import nametuple,deque,defaultdict,OrderedDict,Counter**
-**不止这五种方法，还有其他collections内置的方法**
+**from collections import nametuple,deque,defaultdict,OrderedDict,Counter 不止这五种方法，还有其他collections内置的方法**
 ### 1. nametuple -- 命名元祖
 **命名元组有助于对元组每个位置赋予意义，并且让我们的代码有更好的可读性和自文档性**
 		Point = namedtuple('Point', ['x', 'y'])  # 定义命名元组
