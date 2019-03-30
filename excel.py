@@ -213,10 +213,10 @@ def openpyxl_update_excel():
 
 # pandas支持很多文件类型的数据读写功能json/excel/dat/csv/等，包括html中的table，数据库中的table
 def pandas_read_excel():
-    xls_file = pd.ExcelFile(r'C:\Users\luoshuxiao\Desktop\爬虫总结.xls')   # 用pandas读取2003excel版本以上的xls文件，生成一个excel实列对象
+    xls_file = pd.ExcelFile(r'C:\Users\luoshuxiao\Desktop\爬虫项目总结.xls')   # 用pandas读取2003excel版本以上的xls文件，生成一个excel实列对象
     table = xls_file.parse('Sheet1')   # 解析出表Sheet1的内容，转换成DataFrame数据类型
     print(table.head(5))
-    data = pd.read_excel(r'C:\Users\luoshuxiao\Desktop\爬虫总结.xls')  # 通过read_excel方法读取excel
+    data = pd.read_excel(r'C:\Users\luoshuxiao\Desktop\爬虫项目总结.xls')  # 通过read_excel方法读取excel
     print(data.head(10))
 
     # 从mysql读取数据转为dataframe：

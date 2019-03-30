@@ -1,3 +1,29 @@
+# 五十： 如何读取大文件（10G/100G级别）进行处理？
+		方法一（写迭代器，一行一行读取）：
+		def open_line(filename):
+		   with open(filename,'r') as f:
+		      for i in f:  # 一行一行遍历
+		         yield i  # 返回一行数据
+		注意： 这种方式适合行数多的大文件（如果这个大文件只有一行，这种方式也不能处理）
+		
+		方法二（写迭代器，一块一块读取）：
+		def open_piece(filename):
+		   piece_size = 1024*1024*1024  # 表示一个G
+		   while True:
+		      with open(filename,'rb') as f:
+		           block = f.read(piece_size)  # 每次读取piece_size大小的文件（以二进制读取会提高速度）
+		           if block:
+		               yield block.decode('utf-8') # 返回字符串
+		           else:
+		             return
+        方法三（用pandas，一块一块读取,获取整个文件的迭代对象）：
+        import pandas as pd
+        data = pd.read_table(filename,sep='|',chunksize=400) # 返回迭代对象，对象每个元素是filename文件的400行数据
+        for i in data:   # 遍历data,  i表示400行数据 ，也可以使用next(data)或者data.\__next\__()方法获取
+            for j in i:  # 遍历i, 拿到每一行数据
+               print(j)  # 处理每一行数据
+            
+        注意：使用与csv等数据类型文件
 # 四十九： python中的with关键字
 **文件、数据库连接、socket、线程、进程等系统资源，应用程序打开这些资源并执行完业务逻辑后，必须释放这些资源，可以通过资源对象的close()或其他方法关闭资源，但是比较繁琐，开发中也容易忘记关闭资源，with关键字对资源管理提供了方便**
 ### a. 文件的打开，关闭：
@@ -166,8 +192,27 @@ closing适用于有close()方法的对象（否则会报AttributeError 错误）
         session.add(goods)
         session.commit()
 ### 2.连接mongodb数据库（pymongo/mongoengine）
-
+		from pymongo import MongoClient
+		client = MongoClient()  # client = MongoClient('mongodb://127.0.0.1:20719') 建立连接
+		db = client.mogujie  # db = client['mogujie'] 获取数据库对象
+		coll = db.goods  # coll = db['goods']  获取集合对象
+		coll.insert_one({"name":'裤子'})  # 插入数据
+		coll.insert_many([{'name':'裤子'},{'name':'衣服'}]) # 插入数据
+		coll.find() # 查询所有数据
 ### 3.连接redis数据库
+		import redis
+		pool = redis.ConnectionPool(host='127.0.0.1',password='123456') # 实现一个连接池
+		r = redis.Redis(connection_pool=pool)
+		r.set('foo','bar')
+		foo = r.get('foo')
+		
+		set(name, value, ex=None, px=None, nx=False, xx=False)
+		　　在Redis中设置值，默认，不存在则创建，存在则修改
+		　　参数：
+		     　　ex，过期时间（秒）
+		     　　px，过期时间（毫秒）
+		     　　nx，如果设置为True，则只有name不存在时，当前set操作才执行
+		     　　xx，如果设置为True，则只有name存在时，岗前set操作才执行
 # 四十七：二叉树的前、中、后、序排列
 **根据根节点的排序位置分为前中后**
 
@@ -176,11 +221,16 @@ closing适用于有close()方法的对象（否则会报AttributeError 错误）
 	后序排列：左、右、根（根节点在最后，左右都自下而上排序）
 
 # 四十六：python时间格式化
-### 1. 时间戳转字符串：
-datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') # 现在时间
-
+### 1. 格式化时间：
+	输出当前时间（字符串）：
+	datetime.datetime.now()   # 输出：2019-03-30 12:47:33.595671
+	datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') # 输出：2019-03-30 12:47:33
+    
 ### 2. 时间戳转字符串：
-
+	输出当前时间（时间戳）：
+	seconds=time.time() # 输出：1553921431.3428378
+    time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(seconds)） # 输出：2019-03-30 12:58:55
+    time.mktime(time.strptime("2018-08-07", "%Y-%m-%d")) # 输出：1533571200.0
 # 四十五： \_\_new\_\_和\_\_init\__的区别和关联：
 **特别注意：python类实例化时默认（自身未重构\__new\__）都是调用父类的\__new\__方法，不会也不能调用自己的\__new\__方法，避免陷入死循环**
 ## 1. 区别：
@@ -191,7 +241,7 @@ datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') # 现在时间
 
 ## 2. 联系（四种特殊情况）：
 ### a. 默认情况：
-	python源码默认的是实例化方法在对象实例化时首先被调用，如果没有重构，默认是调用父类的实例化
+	python源码默认的是实例化方法\__new\__在对象实例化时首先被调用，如果没有重构，默认是调用父类的实例化
 	方法，父类也没有重构，再调用父类的父类，直到基类object的\__new\__方法，返回父类构造的实例化
 	对象和实例化时接受的参数给\__init\__方法对对象进行初始化构造；
 ### b. 重构\__new\__方法，正常返回该类实例化对象和接受的参数：
@@ -412,6 +462,8 @@ datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') # 现在时间
 	        pass
 
 # 四十： django异步请求框架：celery
+
+
 # 三十九： 发布系统设计
 # 三十八： 定时任务：crontab -e 
 # 三十七： python是如何寻找包的,如何执行linux命令？
