@@ -1,3 +1,112 @@
+# 五十一： 可迭代对象、迭代器、生成器、生成式区别
+## a. 可迭代对象：
+**一个对象能够被迭代的使用，这个对象就是可迭代对象**
+
+    容器是一种把多个元素组织在一起的数据结构，容器中的元素可以逐个的迭代获取，容器本身实际
+    上并不支持取出元素的功能，而是由可迭代对象赋予了容器这种能力，比如列表中的元素获取，元
+    祖、字典、集合等；
+
+	python数据类型中，除了整型的基本数据类型都是可迭代对象，包括文件对象，python内部定义一个对象是不是可迭代对象的依据是，该对象是否存在__iter__()对象方法。
+	
+	所以判断一个对象是否是可迭代对象的方法有：
+	方法一：
+	from collections import Iterable
+	isinstance(obj,Iterable) # 返回True表明是可迭代对象
+	
+	方法二：
+	hasattr(obj,'__iter__')  # 返回True表明是可迭代对象
+    因此：可以通过添加__iter__()方法让一个类的实列变为可迭代对象
+## b. 迭代器：
+**迭代器也是一种容器，并且是可迭代对象，因为迭代器是有\__iter\__()方法的，迭代器与可迭代对象的区别就在于，迭代器有\__next__()方法，而单纯的可迭代对象并没有这个方法**
+
+	判断对象是是否是迭代器：
+	方法一：
+	from collections import iterator
+	isinstance(boj,Iterator)  # 返回True表明是迭代器
+	 
+	方法二：
+	hasattr(obj,'__next__')  # 返回True表明是迭代器
+	
+	迭代器可以通过内置函数next(obj)和obj.__next__()方法获取迭代器的下一个值，当迭代器的值
+    取完了之后，再取会抛出StopIteration错误，但是可迭代对象并不能使用这两个方法
+## c. 生成器（本质上来说就是一个迭代器）：
+**一个利用yield返回结果的函数就是一个生成器，用iter(iterable)也可以生成一个生成器**
+
+一般的函数在执行完毕之后会返回一个值然后退出，但是生成器函数会自动挂起，待下一次调用时，会在上次结束位置继续执行，实现了延迟计算,省内存
+
+	斐波那契数列：
+	def fib(max):
+	    n,a,b =0,0,1
+	    while n < max:
+	        yield b
+	        a,b =b,a+b
+	        n = n+1
+	    return 'done'
+	 
+	a = fib(10)
+	for i in a:
+	    print(i)
+
+## d.生成式
+**生成式是一种简单的生成器，返回一个迭代器对象，来源于迭代和列表解析的组合**
+
+	列表解析式：
+	a = [i for i in range(10)]
+	
+	生成式：
+	b = (i for i in range(10))
+	
+	a和b主要有两点区别，第一就是a占用的内存比b大，第二就是a是通过遍历或者下标
+	获取元素，b是通过遍历或者next获取元素
+## e. for循环的遍历机制：
+	可迭代对象是不可以直接从其中获取元素的，for i in obj遍历obj对象时，在for循环内部，被遍历
+	的对象obj会首先调用__iter__()方法，将其变为一个迭代器，然后这个迭代器再调用其__next__()
+	方法，返回取到的值给i，简单的说，for i in obj这句代码做的事就是：
+           obj_iter = obj.__iter__()
+	       i = obj_iter.__next__()  
+    当然以上代码功能并不完整，因为for循环还自动捕捉了迭代器元素取完之后的StopIteration错误
+
+    完整模拟for循环的内部机制的代码如下：
+
+		l = [1,2,3,4,5]
+		item = l.__iter__()  # 生成一个迭代器
+		while True:
+		    try:
+		        i = item.__next__()
+		        print(i)
+		    except StopIteration:  # 捕获异常，如果有异常，说明应该停止迭代
+		        break
+## f. 反向迭代和迭代器切片操作：
+### （1）反向迭代：
+	python内置函数revered()可以实现可迭代对象的反向迭代：
+	a = [1,2,3,4]
+	b = reversed(a) # 此方法是生成一个a的反向对象，创建新的对象
+	print(b)  # 输出：[4,3,2,1]
+    等同于：
+    a.reverse()  # 此方法是将a本身反向，并不创建新对象（只能引用于可变对象）
+    如果实现了__reversed__()方法，就可以在自定义的类上实现反向迭代
+### （2）迭代器切片：
+    切片（islice方法）：
+    import itertools
+    a = (i for i in range(10))
+    b = itertools.islice(a,3)  # 返回一个迭代器对象,类似 [:3]
+    c = itertools.islice(a,3,None) # 返回一个迭代器对象，类似 [3:]
+    c = itertools.islice(a,3,6) # 类似 [3:6]
+    注意： islice会消耗迭代器，经过切片的迭代器会将切片部分以及切片之前的元素去掉，
+          设置了None的islice会将原迭代器全部消耗掉：
+			b = (i for i in range(10))  # 如果b是列表，用islice不会消耗该列表
+			c = itertools.islice(b,3,None)
+			print([i for i in c])  # 输出 [3, 4, 5, 6, 7, 8, 9]
+			print(next(b))  # 抛出StopIteration错误
+
+    去特定元素（dropwhile方法）：
+    import itertools
+    with open('test.py','r') as f: 
+      for line in itertools.dropwhile(lambda x:x.startswith('#'), f):  # 遍历不是以#开头的所有行
+           print(line)
+
+    其中：itertools.dropwhile(lambda x:x.startswith('#'), f)表示删除f中以#开头的行，返回其他行的迭代器
+
 # 五十： 如何读取大文件（10G/100G级别）进行处理？
 		方法一（写迭代器，一行一行读取）：
 		def open_line(filename):
@@ -19,7 +128,7 @@
         方法三（用pandas，一块一块读取,获取整个文件的迭代对象）：
         import pandas as pd
         data = pd.read_table(filename,sep='|',chunksize=400) # 返回迭代对象，对象每个元素是filename文件的400行数据
-        for i in data:   # 遍历data,  i表示400行数据 ，也可以使用next(data)或者data.\__next\__()方法获取
+        for i in data:   # 遍历data,  i表示400行数据 ，也可以使用next(data)或者data.__next__()方法获取
             for j in i:  # 遍历i, 拿到每一行数据
                print(j)  # 处理每一行数据
             
@@ -42,11 +151,11 @@
 ### b. with的实现原理（上下文管理器）：
 **任何实现了\_enter\_()和\_exit\_()方法的对象都可以称之为上下文管理器，任何对象，只要正确实现了上下文管理，就可以使用with来进行管理**
 
-	当一个对象的父类中定义了\_enter\_()和\_exit\_()方法，就可以用with关键字来进行该对象的资源管理
-	with关键字首先会寻找资源对象父类中是否有\_enter\_()和\_exit\_()方法,如果有则会调用\_enter\_()
-	方法，\_enter\_方法一般都是打开资源返回资源对象，当with下的业务逻辑处理完，就会自动调用\_exit\_()
+	当一个对象的父类中定义了__enter__()和__exit__()方法，就可以用with关键字来进行该对象的资源管理
+	with关键字首先会寻找资源对象父类中是否有__enter__()和__exit__()方法,如果有则会调用__enter__()
+	方法，__enter__()方法一般都是打开资源返回资源对象，当with下的业务逻辑处理完，就会自动调用__exit__()方法
 	方法，一般处理一些释放资源的清除工作，当我们要自定义一个上下文管理器，用with进行管理时，编写
-	\_enter\_()方法必须要有返回值，编写\_exit\_()方法传入的参数必须是4个（包括self），如果\_exit\_()
+	__enter__()必须要有返回值，编写__exit__()方法传入的参数必须是4个（包括self），如果__exit__()
     方法返回True，表示with-body中的代码出现异常时，忽略异常继续执行，返回False向上层抛异常
 ### c. with实现线程锁资源的管理
 	import threading
@@ -79,8 +188,8 @@
 	        print('exit')
 	
 	with A() as a:
-	    1/0     # 当with下的代码有异常时，如果\_exit\_()返回True，程序忽略错误，执行\_exit\_()中的代码
-                # 如果\_exit\_()返回False,会抛出错误执行\_exit\_()方法，终止程序（但with并不能捕捉错误）
+	    1/0     # 当with下的代码有异常时，如果__exit__()返回True，程序忽略错误，执行__exit__()中的代码
+                # 如果__exit__()返回False,会抛出错误执行__exit__()方法，终止程序（但with并不能捕捉错误）
 	    a.f()
 	    print(a.a)
 ### e. contextlib模块（让对象实现上下文管理器来支持with）
