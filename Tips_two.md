@@ -1,3 +1,161 @@
+# 五十五： Django_redis缓存
+**除了redis以外,django有多种缓存方式，比如文件，内存，数据库等**
+### a. 安装redis数据库
+**为了安全，redis默认设置成保护模式，没有设置密码外网不能访问，可以将保护模式关闭或者设置密码，或者绑定ip**
+		linux下安装：
+		yum install redis
+		查看服务：
+		ps -ef | grep redis
+		启动服务：
+		service redis start
+		客户端连接：
+		redis-cli -p 6379 -h 127.0.0.1
+		停止服务：
+		service redis stop
+### b. django中安装redis三方库：
+        pip install django_redis 
+### c. 在settins中配置CACHES缓存
+**有多种方式缓存，比如全站缓存，页面缓存，session缓存，接口缓存等等，根据需要配置不同缓存类型，但是必须要有default默认缓存，没有这个会报错**
+
+			CACHES = {
+			 # 默认缓存
+			 'default': {
+				 'BACKEND': 'django_redis.cache.RedisCache',
+				 'LOCATION': [
+				     'redis://1.2.3.4:6379/0',
+				 ],
+				 'KEY_PREFIX': 'teamproject',
+				 'OPTIONS': {
+					 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+					 'CONNECTION_POOL_KWARGS': {
+					     'max_connections': 1000,
+					 },
+					 'PASSWORD': '123456',
+				 }
+			 },
+			 # 页⾯缓存
+			 'page': {
+				 'BACKEND': 'django_redis.cache.RedisCache',
+				 'LOCATION': [
+				     'redis://1.2.3.4:6379/1',
+				 ],
+				 'KEY_PREFIX': 'teamproject:page',
+				 'OPTIONS': {
+					 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+					 'CONNECTION_POOL_KWARGS': {
+					 'max_connections': 500,
+				 },
+				 'PASSWORD': '123456',
+				 }
+			 },
+			 # 会话缓存
+			 'session': {
+				 'BACKEND': 'django_redis.cache.RedisCache',
+				 'LOCATION': [
+					 'redis://1.2.3.4:6379/2',
+				 ],
+				 'KEY_PREFIX': 'teamproject:session',
+				 'TIMEOUT': 1209600,
+				 'OPTIONS': {
+					 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+					 'CONNECTION_POOL_KWARGS': {
+					 'max_connections': 2000,
+				 },
+				 'PASSWORD': '123456',
+				 }
+			 },
+			 # 接⼝数据缓存
+			 'api': {
+				 'BACKEND': 'django_redis.cache.RedisCache',
+				 'LOCATION': [
+				 	'redis://1.2.3.4:6379/3',
+				 ],
+				 'KEY_PREFIX': 'teamproject:api',
+				 'OPTIONS': {
+					 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+					 'CONNECTION_POOL_KWARGS': {
+					 'max_connections': 500,
+				 },
+				 'PASSWORD': '123456',
+				 }
+			 },
+			}
+### d. 在需要缓存的视图函数前加装饰器：@cache_page()
+**如果是session缓存就不需要加装饰器**
+
+		@cache_page(timeout=60,cache='api') # timeout是过期时间，cache指定缓存方式
+		def test(request):
+		    users = User.objects.all()
+		    return render(request, 'test.html', {'users': users})
+
+# 五十四： 浏览器的同源策略
+### a. 概论
+	浏览器的同源策略是由Netscape提出的一个安全策略，如今所有支持javascript的浏览器都会使用这个策略
+	所谓同源， 是指域名，协议，端口相同，当一个页面加载或者执行一个脚本文件，需要打开另外一个地址，无
+    论是接口还是网页都会检查要打开的地址是否是和当前地址同源，同源才会被执行，不同源不会被执行；
+### b. CORS -- Cross Origin Rrsource Sharing 跨域资源共享
+	方法一（不推荐使用，对自身服务器增加额外流量）：
+		因为同源策略是限制js请求的，所以也有一种方式可以或者说可能可以解决这个问题，就是利用requests
+        或者其他方式在服务器端获取数据，再调用这个数据进行操作或者直接渲染，实现数据的跨域请求利用；
+
+    方法二（通常设置全部接口，资源共享）：
+        配置cors跨域插件（安装插件： pip install django-cors-headers）
+        在settings中配置：
+        INSTALLED_APPS 中添加： 'corsheaders';
+        MIDDLEWAER_CLASS 中添加： 'corsheaders.middleware.CorsMiddleware' #必须在django.middleware.common.CommonMiddleware'之前
+
+        简单配置跨域资源具体权限：
+        CORS_ORIGIN_WHITELIST = ('127.0.0.1:5000'，)  # 将允许访问本域的地址添加到白名单中
+        CORS_ALLOW_CREDENTIALS = True
+        CORS_ALLOW_METHODS = ('GET', 'POST', 'PUT', 'DELETE')
+
+
+            详细配置：
+			#跨域增加忽略
+			CORS_ALLOW_CREDENTIALS = True
+			CORS_ORIGIN_ALLOW_ALL = True
+			CORS_ORIGIN_WHITELIST = (
+			    '*'
+			)
+			 
+			CORS_ALLOW_METHODS = (
+			    'DELETE',
+			    'GET',
+			    'OPTIONS',
+			    'PATCH',
+			    'POST',
+			    'PUT',
+			    'VIEW',
+			)
+			 
+			CORS_ALLOW_HEADERS = (
+			    'XMLHttpRequest',
+			    'X_FILENAME',
+			    'accept-encoding',
+			    'authorization',
+			    'content-type',
+			    'dnt',
+			    'origin',
+			    'user-agent',
+			    'x-csrftoken',
+			    'x-requested-with',
+			)
+
+    方法三（通常设置部分个别接口资源共享）：
+        在需要设置跨域资源共享的视图函数的响应头当中加入Access-Control-Allow-Origin参数，如下：
+        response["Access-Control-Allow-Origin"]="http://127.0.0.1:8006"
+
+        将共享的地址加入响应头当中，可以给指定的地址赋予访问权限，'*'代表所有地址都能访问，
+
+        如下视图函数，表示这个接口可以被http://127.0.0.1:8080通过Ajax请求数据：
+
+		def test(request):
+		    users = User.objects.all()
+		    response = render(request, 'test.html', {'users': users})
+		    response["Access-Control-Allow-Origin"]="http://127.0.0.1:8080" # 在响应头添加共享域的地址
+		    return response
+
+
 # 五十三： select/poll/epoll
 # 五十二： 如何配置HTTPS的SSL协议：
 ### a. 什么叫SSL协议：
@@ -695,7 +853,49 @@ closing适用于有close()方法的对象（否则会报AttributeError 错误）
 
 
 # 三十九： 发布系统设计
-# 三十八： 定时任务：crontab -e 
+# 三十八： 系统定时任务：crontab -e 
+### a. 概论
+	linux系统是由crond系统服务来控制的，原本就有很多计划性工作，因此这个系统服务是默认
+	启动的，也为使用者提供了计划任务的命令： crontab 命令；
+	
+	crond是linux下周期性执行任务的一个守护进程，与windows下的计划任务类似，当安装完成
+	操作系统后默认会安装此服务，并且会自动启动crond进程，该进程会定期检查是否有要执行的
+	任务，如果有，则自动执行；
+### b. linux下两种任务调度方式 -- 系统任务调度和用户任务调度；
+**无论是那种方式，调度任务配置文件中每一行就可以对应配置一个调度任务**
+
+	系统任务调度 -- /etc/crontab文件中配置调度任务，只有root用户能用
+	比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，就是系统任务调度配置文件；
+	
+	用户调度任务 -- crontab -e命令，所有用户都能用，任务自动写入/var/spool/cron/username中
+	用户自定义自己的调度任务；
+	
+		crontab [-u uaername] [-l/-e/-r] -- 
+			-u  ： 只有root能使用该选项，为指定的用户创建/移出crontab任务；
+			-e  : 编辑crontab任务(创建或者移出)
+			-l  ：查看crontab任务
+			-r  ：清空当前用户所有的crontab任务（移出某个任务，用-e）
+
+### c. 语法格式
+	crontab定时任务每项工作 (每行)的命令格式有六个栏位，前五个都是时间，最后一个是命令：
+		第一个栏位： 代表分钟（0-59或者*）
+		第二个栏位： 代表小时（0-23或者*）
+		第三个栏位： 代表日期（1-31或者*）
+		第四个栏位： 代表月份（1-12或者*）
+		第五个栏位： 代表星期（0-7或者*，其中0和7都代表星期天）
+		第六个栏位： 代表任务命令
+	
+		前五个栏位的辅助字符：
+		    *（星号） -- 代表任何时刻
+		   ，（逗号） -- 代表分割时段的意思（多个时刻）
+		    -（减号） -- 代表一段时间范围内
+		    /(斜线) -- 代表每隔单位时间间隔
+	
+		以下几个crontab定时任务：
+				0 3,6 * * * command   -- 3：00和6：00执行command
+				20 8-12 * * * command  -- 8点到12点之间的每小时20分斗进行command
+				*/5 * * * * command  -- 没五分钟进行一次command（0-59/5 * * * * command）
+	    注意： 日月和周循环不能同时出现，系统可能会错误的执行
 # 三十七： python是如何寻找包的,如何执行linux命令？
 **python内置的sys模块可以与python运行时的配置或资源交互，调用相关函数或变量，比如python解释器，os模块能实现基本的操作系统函数/变量功能，可以通过dir(os)/dir(sys)查看模块中的方法或变量**
 ### 1. sys模块 ：
