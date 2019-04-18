@@ -1,92 +1,4 @@
-# 五十五： Django_redis缓存
-**除了redis以外,django有多种缓存方式，比如文件，内存，数据库等**
-### a. 安装redis数据库
-**为了安全，redis默认设置成保护模式，没有设置密码外网不能访问，可以将保护模式关闭或者设置密码，或者绑定ip**
-		linux下安装：
-		yum install redis
-		查看服务：
-		ps -ef | grep redis
-		启动服务：
-		service redis start
-		客户端连接：
-		redis-cli -p 6379 -h 127.0.0.1
-		停止服务：
-		service redis stop
-### b. django中安装redis三方库：
-        pip install django_redis 
-### c. 在settins中配置CACHES缓存
-**有多种方式缓存，比如全站缓存，页面缓存，session缓存，接口缓存等等，根据需要配置不同缓存类型，但是必须要有default默认缓存，没有这个会报错**
 
-			CACHES = {
-			 # 默认缓存
-			 'default': {
-				 'BACKEND': 'django_redis.cache.RedisCache',
-				 'LOCATION': [
-				     'redis://1.2.3.4:6379/0',
-				 ],
-				 'KEY_PREFIX': 'teamproject',
-				 'OPTIONS': {
-					 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-					 'CONNECTION_POOL_KWARGS': {
-					     'max_connections': 1000,
-					 },
-					 'PASSWORD': '123456',
-				 }
-			 },
-			 # 页⾯缓存
-			 'page': {
-				 'BACKEND': 'django_redis.cache.RedisCache',
-				 'LOCATION': [
-				     'redis://1.2.3.4:6379/1',
-				 ],
-				 'KEY_PREFIX': 'teamproject:page',
-				 'OPTIONS': {
-					 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-					 'CONNECTION_POOL_KWARGS': {
-					 'max_connections': 500,
-				 },
-				 'PASSWORD': '123456',
-				 }
-			 },
-			 # 会话缓存
-			 'session': {
-				 'BACKEND': 'django_redis.cache.RedisCache',
-				 'LOCATION': [
-					 'redis://1.2.3.4:6379/2',
-				 ],
-				 'KEY_PREFIX': 'teamproject:session',
-				 'TIMEOUT': 1209600,
-				 'OPTIONS': {
-					 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-					 'CONNECTION_POOL_KWARGS': {
-					 'max_connections': 2000,
-				 },
-				 'PASSWORD': '123456',
-				 }
-			 },
-			 # 接⼝数据缓存
-			 'api': {
-				 'BACKEND': 'django_redis.cache.RedisCache',
-				 'LOCATION': [
-				 	'redis://1.2.3.4:6379/3',
-				 ],
-				 'KEY_PREFIX': 'teamproject:api',
-				 'OPTIONS': {
-					 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-					 'CONNECTION_POOL_KWARGS': {
-					 'max_connections': 500,
-				 },
-				 'PASSWORD': '123456',
-				 }
-			 },
-			}
-### d. 在需要缓存的视图函数前加装饰器：@cache_page()
-**如果是session缓存就不需要加装饰器**
-
-		@cache_page(timeout=60,cache='api') # timeout是过期时间，cache指定缓存方式
-		def test(request):
-		    users = User.objects.all()
-		    return render(request, 'test.html', {'users': users})
 
 # 五十四： 浏览器的同源策略
 ### a. 概论
@@ -957,6 +869,7 @@ closing适用于有close()方法的对象（否则会报AttributeError 错误）
 **from collections import nametuple,deque,defaultdict,OrderedDict,Counter 不止这五种方法，还有其他collections内置的方法**
 ### 1. nametuple -- 命名元祖
 **命名元组有助于对元组每个位置赋予意义，并且让我们的代码有更好的可读性和自文档性**
+
 		Point = namedtuple('Point', ['x', 'y'])  # 定义命名元组
 		p = Point(10, y=20)  # 创建一个元祖对象 Point(x=10,y=20)
 		a = p.x + p.y
@@ -966,6 +879,7 @@ closing适用于有close()方法的对象（否则会报AttributeError 错误）
 
 ### 3. defaultdict -- 内建dict类的子类，它覆写了一个方法并添加了一个可写的实例变量（比使用dict.setdefault 方法快）
 **可以设置字典value的默认数据类型，一般设置为容器类，比如，list,tuple,dict等，如果key对应的值没有，会创建对应的空容器**
+
 		s = [('yellow', 1), ('blue', 2), ('yellow', 3), ('blue', 4), ('red', 1)]
 		d = defaultdict(list)  # 设置字典d的value默认是列表
 		for k,v in s:
@@ -1266,9 +1180,10 @@ closing适用于有close()方法的对象（否则会报AttributeError 错误）
 		print(account1.balance)
 
 # 三十一： django框架model层中的Q/F函数
-### 1. F() -- 将两个字段进行比较作为查询条件
+### 1. F() -- 允许Django在未实际链接数据的情况下具有对数据库字段的值的引用，不用获取对象放在内存中再对字段进行操作，直接执行原生产sql语句操作
 
        用F()方法实现查询物理成绩大于数学成绩的学生：
+       from django.db.models import F
        stus = Student.objects.filter(physics__gt=F('math'))
        print(stu.s_name) 
 
@@ -1277,6 +1192,19 @@ closing适用于有close()方法的对象（否则会报AttributeError 错误）
 	    for stu in stus:
 	        if stu.physics > stu.math:
 	            print(stu.s_name)
+
+     通常情况下我们在更新数据时需要先从数据库里将原数据取出后方在内存里，然后编辑某些属性，最后提交；
+        
+		all = Student.objects.filter(auth="小明")
+		for b in all:
+		    math = b.math
+		    b.math = math + 10
+		    b.save
+    
+	使用F对象来计算：
+        from django.db.models import Q
+		Student.objects.filter(auth="小明").update(math=F("math")+10)
+
 ### 2. Q() -- 与、或、非逻辑运算
         
        与运算： 查询年纪大于18且小于20的学生：

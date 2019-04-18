@@ -71,7 +71,10 @@
 		
 		查看启动的docker容器： docker ps
 		停止指定的docker容器： docker container stop 85ac7faf8ea3
-
+                             docker stop  85ac7faf8ea3
+        删除指定的容器： docker rm 85ac7faf8ea3
+        进入容器： docker exec -it e1066fe2db35 /bin/bash 
+                  docker exec 是docker镜像的连接命令，类似ssh一样
 ## c. docker hub仓库 和daocloud镜像仓库
 **docker hub是国外的平台，连接速度可能比较慢，所以国内一般在daocloud管理镜像**
 

@@ -1,20 +1,28 @@
+﻿# -*- coding: utf-8 -*-
+
 """
 三种方式读写修改excel文件：
 一： xlrd/xlwt/xlutils -- 读/写/修改
 二： openpyxl
 三： pandas
 """
+
 import xlrd
 import xlwt
-from xlutils import copy
-
-import pymysql
-import pandas as pd
-from sqlalchemy import create_engine
-import sqlalchemy as sqla
 import openpyxl
+import pandas as pd
+
+from xlutils import copy
 from openpyxl import styles
 
+import pymysql
+import sqlalchemy as sqla
+
+from sqlalchemy import create_engine
+
+
+
+# 测试用数据
 province = ['北京市', '天津市', '河北省', '山西省', '内蒙古自治区', '辽宁省',
             '吉林省', '黑龙江省', '上海市', '江苏省', '浙江省', '安徽省', '福建省',
             '江西省', '山东省', '河南省', '湖北省', '湖南省', '广东省', '广西壮族自治区',
