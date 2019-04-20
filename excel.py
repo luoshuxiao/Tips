@@ -65,17 +65,6 @@ def xlrd_read_excel(filename):
 
 
 def xlwt_write_excel(filename):
-    #  连接mysql数据库下的information_schema数据库（该数据库COLUMNS表存有所有数据库和表等相关信息）
-    con = pymysql.connect(host='127.0.0.1', user='root', passwd='123456', db='information_schema', port=3306)
-    cursor = con.cursor()
-    #  从information_schema表查询jd数据库下的goods表的字段名
-    sql = 'select column_name from COLUMNS where table_name="goods" and table_schema="jd"'
-    cursor.execute(sql)
-    cols = cursor.fetchall()
-    print(cols)  # (('id',), ('title',), ('img',), ('price',), ('sku',), ('detail',)) 存放查询到的每一条记录的字段信息
-    columns_list = [i[0] for i in cols]  # 将数据库表的字段名组装成列表
-    print(columns_list)
-    con.close()
     write_e = xlwt.Workbook(encoding='utf-8',style_compression=0)  # 创建一个excel工作簿（文件）,后一个参数表示是否压缩一般不用
     test = write_e.add_sheet('test', cell_overwrite_ok=True)  # 添加一个excel表,cell_overwrite_ok表示覆盖单元格，默认False
     test2 = write_e.add_sheet('test2', cell_overwrite_ok=True)  # 添加第二个excel表
