@@ -1,3 +1,5 @@
+# 六十三： python建立ice通信框架
+# 六十二： pycharm通过ssh搭配docker进行远程服务器调试
 # 六十一： 如何动态获取mysql中一张表的字段名？
 **从mysql自带的information_schema数据库的COLUMNS表获取**
 
