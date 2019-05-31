@@ -75,7 +75,19 @@
         删除指定的容器： docker rm 85ac7faf8ea3
         进入容器： docker exec -it e1066fe2db35 /bin/bash 
                   docker exec 是docker镜像的连接命令，类似ssh一样
-## c. docker hub仓库 和daocloud镜像仓库
+## c. 相关命令
+
+		镜像打包成tar文件：
+		docker save -o <保存路径> <镜像名称:标签>
+		docker save -o ./ubuntu18.tar ubuntu:18.04
+		
+		镜像加载拷贝到服务器中：
+		docker load --input ./ubuntu18.tar
+		
+		容器自动重启：
+		docker run --restart=always  （启动容器运行时加always参数）
+		docker update --restart=always <CONTAINER ID>（已经运行的容器update）
+## d. docker hub仓库 和daocloud镜像仓库
 **docker hub是国外的平台，连接速度可能比较慢，所以国内一般在daocloud管理镜像**
 
 	注册daocloud平台：
