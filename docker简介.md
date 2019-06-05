@@ -61,7 +61,7 @@
 		
 		第五步：创建docker镜像(最后有一个点符号)
 		docker build -t first_docker .
-		docker image ls (查看已有镜像)
+		docker image ls (查看已有镜像或者docker images)
 		
 		第六步： 重启docker
 		service docker restart 或者systemctl restart docker
@@ -76,7 +76,8 @@
         进入容器： docker exec -it e1066fe2db35 /bin/bash 
                   docker exec 是docker镜像的连接命令，类似ssh一样
 ## c. 相关命令
-
+        查看已有容器：docker ps (正在运行的)
+                    docker ps -a (所有容器，包括停止的)
 		镜像打包成tar文件：
 		docker save -o <保存路径> <镜像名称:标签>
 		docker save -o ./ubuntu18.tar ubuntu:18.04
