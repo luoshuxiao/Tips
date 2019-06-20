@@ -1,4 +1,111 @@
+# 六十五： mysql语句执行原理：
+### 第一步： 识别关键字 -->
+    服务端会将sql查询语句放在一个线程当中运行，发送给mysql，到达sql后，mysql会首先判断sql语句的
+    前六个字符是否是select,并且语句中不带有sql_no_cache关键字，符合条件，下一步就是查询缓存；
+### 第二步： 查询缓存（mysql8.0之后取消缓存机制） -->
+	缓存其实就是一张hash表，它将执行过的查询语句和结果以key-value的形式存储在内存中，key是由查询
+    语句、数据库、客户端协议等生成的一个hash值，value是查询的结果；
+	当然可以通过在查询语句中添加sql_no_cache关键字，或者将query_type_cache参数设置为demand绕过
+    缓存；
+	由于缓存具有一定的局限性，所有高版本mysql取消了缓存机制；
+		局限1：sql语句一点点不同，都不会命中缓存（空格、注释等）；
+		局限2：对一个 表的更新，会将所有缓存清空；
+### 第三步： 解析器 -->
+	缓存不命中情况下，进入解析器，解析器分两步对sql进行解析：
+		解析步骤一：词法分析
+		    从左往右一个字符一个字符地输入，然后根据构词规则识别单词，然后生成多个token；
+		解析步骤二：语法解析
+		    判断是否符合mysql的语法规则，如果不符合规则，抛出错误提示；如果语法正确，会生成一个语
+            法树，送入到预处理器；
+### 第四步： 预处理器 -->
+     预处理器会对sql涉及的表名、列名、数据库等做匹配，看是否存在这些名字，不存在会抛出错误提示，然
+     后再做权限验证，看是否具备操作权限，然后将这个语法树传递给优化器；
+### 第四步： 优化器 -->
+     优化器是针对语法树做优化，判断如何查询才能更快，生成一个执行计划，将执行计划交给执行器；
+### 第五步： 执行器 -->
+     执行器通过执行计划，一条一条的调用底层的存储引擎，逐步执行指令；
+     mysql定义了一系列抽象的存储引擎API，支持插件式存储引擎架构。mysql实现了一个抽象接口层，叫做
+     handler(sql/handler.h),其中定义了接口函数，比如：ha_open,ha_index_end,ha_create等等，存
+     储引擎需要实现 这些接口才能被系统使用；
+### 第六步： 返回结果
+    最后，mysql会将查询的结果返回给客户端，如果是select类型的sql会将其缓存起来，其他类型的sql，会
+    将该表涉及到的查询缓存清空（mysql8.0版本后取消缓存机制）；
+# 六十四:  nginx反向代理指定ip、端口简单设置
+	server {
+	  listen 4000;
+	  server_name 192.168.2.99;
+	
+	  access_log /package/nginx_fra_logs/fra_access_0.log;
+	  error_log /package/nginx_fra_logs/fra_error_0.log;
+	
+	  location / {
+	      proxy_pass http://192.168.2.99:4000;
+	  }
+	}
 # 六十三： python建立ice通信框架
+### 1. 何为ice框架 -- 
+    ice出自ZeroC,是一种面向对象的中间件平台，适合于异构平台环境中使用，客户端和服务器可以采用不同的编程语言，不同的操作系统
+	    和机器架构，并且可以使用多种网络技术进行同信，可移植性高;Zeroc ICE( Internet Communications Engine)中间件号称标准统
+	    一，开源，跨平台，跨语言，分布式，安全，服务透明，负载均衡，面向对象，性能优越，防火期传统，通讯屏蔽等多个优点，多种语言
+	    之间采用共同的Slice进行沟通，支持C,JAVA,C#,VB,Python,Ruby,PHP等多语言映射。
+### 2. ice框架搭建简介 -- 
+	a. 安装ice -- pip install zeroc-ice
+	b. 创建slice通信文件 -- 如：img.ice
+	c. 在slice文件中建立module（详情请参照官方） -- 如下：
+		module ImageRg
+		{
+		    sequence<byte> a;
+		    sequence<a> b;
+		    sequence<b> Images;
+		    sequence<string> targetPlates;
+		    sequence<string>  imageTimes;
+		    sequence<string> illegalTypes;
+		    sequence<string> imageDates;
+		    sequence<string> pointsInfo;
+		    sequence<string> targetLanes;
+		    interface ImageDetection
+		    {
+		        string imagesRg(Images images,targetPlates plates, imageTimes time, illegalTypes type, imageDates date, pointsInfo point, targetLanes lane);
+		    }
+		
+		}
+    d. 生成ice编译库(slice2py命令，其他语言有对应命令) -- slice2py img.ice (会生成img_ice.py文件)
+    e. 编写服务端代码：
+		import Ice
+        Ice.loadSlice('img.ice')
+		class ImageDetection(ImageRg.ImageDetection):
+			 def imagesRg(self, images, target_plates, image_times, illegal_types, image_dates, points_info, target_lanes, context=None):
+			 return 'hello'
+		with Ice.initialize(sys.argv, "config.server") as communicator:
+		    adapter = communicator.createObjectAdapter("ImageA")
+		    adapter.add(ImageDetection(), Ice.stringToIdentity('ImageRg'))
+		    adapter.activate()
+		    communicator.waitForShutdown()
+    f. 编写客户端代码：
+		import Ice
+		import IceGrid
+		Ice.loadSlice('img.ice')
+		def run(communicator):
+		    try:
+		        base = communicator.stringToProxy("ImageRg")
+		        aaa = ImageRg.ImageDetectionPrx.checkedCast(base)
+		    except Ice.NotRegisteredException:
+		        query = IceGrid.QueryPrx.checkedCast(
+		            communicator.stringToProxy("ImageRgIceGrid/Query"))
+		        aaa = ImageRg.ImageDetectionPrx.checkedCast(
+		            query.findObjectByType("::ImageRg::ImageDetection"))
+                result = aaa.imagesRg(img, target_plate, img_time, ill_type, img_date, point_info, target_lane)
+                print(result)
+		with Ice.initialize(sys.argv, "config.client") as communicator:
+		    if len(sys.argv) > 1:
+		        print(sys.argv[0] + ": too many arguments")
+		        sys.exit(1)
+		    run(communicator)
+### 3. 易错点概括：
+	a. ice文件moudle创建，相当于创建客户端和服务器通信的接口，定义接口函数时函数传递的参数的数据类型必须跟实际情况对应；
+	b. 动态、静态生成编译库，静态生成指使用slice2py命令生成，动态生成指代码中生成Ice.loadSlice('img.ice')，实际开发两者可以一起使用
+	c. ice均衡负载的配置，icegrid可以配置多个节点，节点配置易错，节点启动文件.xml文件配置，主节点config.grid、子节点node.conf配置 
+
 # 六十二： pycharm通过ssh搭配docker进行远程服务器调试
 # 六十一： 如何动态获取mysql中一张表的字段名？
 **从mysql自带的information_schema数据库的COLUMNS表获取**

@@ -72,7 +72,8 @@
 		查看启动的docker容器： docker ps
 		停止指定的docker容器： docker container stop 85ac7faf8ea3
                              docker stop  85ac7faf8ea3
-        删除指定的容器： docker rm 85ac7faf8ea3
+        删除指定的容器： docker rm 容器名或id （stop状态）
+                       docker rm -rf 容器名或id(运行状态也能删除) 
         进入容器： docker exec -it e1066fe2db35 /bin/bash 
                   docker exec 是docker镜像的连接命令，类似ssh一样
 ## c. 相关命令

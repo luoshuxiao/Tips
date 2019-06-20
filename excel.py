@@ -129,6 +129,9 @@ def openpyxl_read_excel():
         for cell in col:   # 遍历每一列的每一行，获取单元格对象
             cell_value = cell.value  # 获取单元格的值
             print(cell_value)
+            print(cell.row)  # 获取单元格所在的行
+            print(cell.column)  # 获取单元格所在的列
+            print(cell.coordinate)  # 获取单元格的坐标 -- 'B2'
 
     # 获取指定行、列的数据 -- 将sheet.rows/columns生成器转换成list类型通过索引获取
     for cell in list(worksheet2.rows)[0]:
@@ -160,6 +163,12 @@ def openpyxl_write_excel():
     worksheet.title = 'openpyxl'  # 为该表取表名
     worksheet1 = workbook.create_sheet()  # 默认在工作簿的最后一页（传入页码参数可以插入到指定页码前）
     worksheet1.title = 'openpyxl1'
+    # 边框的样式
+    border_thin = Side(border_style='thin', color=openpyxl.styles.colors.BLACK)
+    for row in worksheet.rows:
+        for cell in row:
+            # 给每一个单元格加四个边框（可以指定只加相应的上下左右边框）
+            cell.border = Border(left=border_thin, right=border_thin, top=border_thin, bottom=border_thin)
     # 将数据一行一行或者一列一列写入excel表中（可以将整张表数据放在一个列表中写入）
     for i in range(len(project)):
         worksheet.cell(1, i+1, project[i])  # 写第一行数据，openpyxl单元格下标是从1开始的
@@ -234,7 +243,7 @@ def pandas_write_excel():
     #  数据df1写入到df1表中
     df1.to_excel(writer_pd, sheet_name='df1', startcol=0, index=True)
     #  数据df2写入到df1表中
-    df2.to_excel(writer_pd, sheet_name='df1', startcol=4, index=False)
+    df2.to_excel(writer_pd, sheet_name='df2', startcol=4, index=False)
     #  将数据df3写入到df3表中
     df3.to_excel(writer_pd, sheet_name='df3', index_label='索引列标题')
     writer_pd.save()  # 保存
