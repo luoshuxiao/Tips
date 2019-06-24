@@ -164,11 +164,11 @@ def openpyxl_write_excel():
     worksheet1 = workbook.create_sheet()  # 默认在工作簿的最后一页（传入页码参数可以插入到指定页码前）
     worksheet1.title = 'openpyxl1'
     # 边框的样式
-    border_thin = Side(border_style='thin', color=openpyxl.styles.colors.BLACK)
+    border_thin = styles.Side(border_style='thin', color=openpyxl.styles.colors.BLACK)
     for row in worksheet.rows:
         for cell in row:
             # 给每一个单元格加四个边框（可以指定只加相应的上下左右边框）
-            cell.border = Border(left=border_thin, right=border_thin, top=border_thin, bottom=border_thin)
+            cell.border = styles.Border(left=border_thin, right=border_thin, top=border_thin, bottom=border_thin)
     # 将数据一行一行或者一列一列写入excel表中（可以将整张表数据放在一个列表中写入）
     for i in range(len(project)):
         worksheet.cell(1, i+1, project[i])  # 写第一行数据，openpyxl单元格下标是从1开始的
@@ -208,6 +208,8 @@ def openpyxl_update_excel():
     #  设置行高，列宽：
     worksheet.row_dimensions[2].height = 40      # 设置第2行行高40px
     worksheet.column_dimensions['C'].width = 40      # 设置C列列宽40px
+    worksheet.freeze_panes = 'B4'  # 冻结单元格B4 上面的行和左边的列，字符串'B4'用cell对象表示也可以（滚动时一直显示）
+    worksheet.cell(1, 1).fill = styles.PatternFill('solid', fgColor='FAF0E6')  # 将第一行第一列单元格的填充色改为 FAF0E6
     #  合并拆分单元格：
     #  合并后的单元格在表中的定位和数据值，都以左上角单元格为准（无论是空还是有数据）
     worksheet.merge_cells('B1:G1')  # 合并一行中的几个单元格（合并后以B1为准）
