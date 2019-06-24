@@ -83,18 +83,25 @@ Supervisord是用Python实现的一款非常实用的进程管理工具。superv
 	提交命令：docker push <镜像名或id:标签>
 	拉取docker命令： docker pull <镜像名或id:标签>
 
-## scp文件传送：
-	本地到远程 -->  scp /package/second-2.2.tar hadoop@192.168.3.210:/package/
-	远处到本地 -->  scp root@192.168.3.210:/opt/soft/nginx-0.5.38.tar.gz  /opt/soft/
+## linux命令：
+    scp文件传送：
+		本地到远程 -->  scp /package/second-2.2.tar hadoop@192.168.3.210:/package/
+		远处到本地 -->  scp root@192.168.3.210:/opt/soft/nginx-0.5.38.tar.gz  /opt/soft/
+    查看cpu信息： cat /proc/cpuinfo
+    查看系统体系结构：uname -a
+    查看系统内核：uname -r
+    查看显卡驱动： nvidia-smi
+    查看显卡驱动（每秒刷新）：nvidia-smi -l 1
+    查看系统加载的某个模块以及相关依赖项： lsmod | grep -i nvidia (显卡驱动)
 ## linux显卡卸载/安装：
-卸载：方式一：
-        sudo ./NVIDIA-Linux-x86_64-418.56.run --uninstall
-     方式二：
-        sudo apt-get --purge remove nvidia* 
-        或者：sudo apt-get remove --purge '^nvidia-.*'
-     （网上还有其他很多方式）
-安装：第一步 -- 官网下载需要的nvidia版本（.run文件）
-     第二步 -- service lightdm stop （关闭 X server）
-     第三步 -- sudo init 3
-     第四步 -- sudo sh NVIDIA*.run –no-opengl-files
-              或者 dpkg -i nvidia-diag-driver-local-repo-ubuntu1604_375.66-1_amd64.deb
+	卸载：方式一：
+	        sudo ./NVIDIA-Linux-x86_64-418.56.run --uninstall
+	     方式二：
+	        sudo apt-get --purge remove nvidia* 
+	        或者：sudo apt-get remove --purge '^nvidia-.*'
+	     （网上还有其他很多方式）
+	安装：第一步 -- 官网下载需要的nvidia版本（.run文件）
+	     第二步 -- service lightdm stop （关闭 X server）
+	     第三步 -- sudo init 3
+	     第四步 -- sudo sh NVIDIA*.run –no-opengl-files
+	              或者 dpkg -i nvidia-diag-driver-local-repo-ubuntu1604_375.66-1_amd64.deb

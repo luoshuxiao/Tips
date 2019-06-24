@@ -4,7 +4,7 @@
 三种方式读写修改excel文件：
 一： xlrd/xlwt/xlutils -- 读/写/修改
 二： openpyxl
-三： pandas
+三： pandas -- 只能实现对数据进行操作，不能实现对excel样式操作
 """
 
 import xlrd
