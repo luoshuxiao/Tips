@@ -51,7 +51,9 @@ docker update --restart=always <CONTAINER ID>（已经运行的容器update）
 ## 容器更新备份成新镜像： docker commit 容器 新镜像名
 
 ## Python进程管理工具：supervisor (实现守护进程的功能)
-Supervisord是用Python实现的一款非常实用的进程管理工具。supervisord会帮你把管理的应用程序转成daemon程序，而且可以方便的通过命令开启、关闭、重启等操作，而且它管理的进程一旦崩溃会自动重启，这样就可以保证程序执行中断后的情况下有自我修复的功能。
+	Supervisord是用Python实现的一款非常实用的进程管理工具。supervisord会帮你把管理的应用程序转成daemon程序，
+	而且可以方便的通过命令开启、关闭、重启等操作，而且它管理的进程一旦崩溃会自动重启，这样就可以保证程序执行中断
+	后的情况下有自我修复的功能。
 
 	--> 安装supervisor: 可以下载安装包安装，也可以直接pip安装
 	--> 两个类型的命令：supervisord和supercisorctl（安装完成后在/user/bin下）
@@ -105,3 +107,45 @@ Supervisord是用Python实现的一款非常实用的进程管理工具。superv
 	     第三步 -- sudo init 3
 	     第四步 -- sudo sh NVIDIA*.run –no-opengl-files
 	              或者 dpkg -i nvidia-diag-driver-local-repo-ubuntu1604_375.66-1_amd64.deb
+    问题：如果安装成功后，第二天或者隔一段时间nvidia-smi就没有输出，报以下错误：
+                Failed to initialize NVML: driver/library version mismatch，
+         可能是因为nvidia自动更新了版本，但是nvidia内核版本没更新，用命令：vim /etc/apt/apt.conf.d/50unattended-upgrades ，
+         将Unattended-Upgrade::Allowed-Origins里面的所有选项注释掉，关闭自动更新功能，然后重新装需要的nvidia版本，装成功后重启电脑；
+
+## linux只能访问内网，不能访问外网：
+**现象：ping www.baidu.com ，ping不通，但是ping内网能ping通**
+
+    可能原因：网关设置有问题，防火墙, DNS，网卡等等原因；
+    解决措施（可能能解决）：
+       1. 设置网卡，ip: vi /etc/sysconfig/network-scripts/ifcfg-eth0
+	       	DEVICE=eth0 #描述网卡对应的设备别名，例如ifcfg-eth0的文件中它为eth0   
+			BOOTPROTO=static #设置网卡获得ip地址的方式，可能的选项为static，dhcp或bootp，分别对应静态指定的 ip地址，通过dhcp协议获得的ip地址，通过bootp协议获得的ip地址   
+			BROADCAST=192.168.0.255 #对应的子网广播地址   
+			HWADDR=00:07:E9:05:E8:B4 #对应的网卡物理地址   
+			IPADDR=192.168.0.2 #如果设置网卡获得 ip地址的方式为静态指定，此字段就指定了网卡对应的ip地址   
+			IPV6INIT=no   
+			IPV6_AUTOCONF=no   
+			NETMASK=255.255.255.0 #网卡对应的网络掩码   
+			NETWORK=192.168.0.0 #网卡对应的网络地址   
+			ONBOOT=yes #系统启动时是否设置此网络接口，设置为yes时，系统启动时激活此设备
+       设置好后，重启网卡：service network restart 
+       ping www.baidu.com 能ping通，说明成功解决，不能ping通，进行第2步，设置网关路由
+
+       2. 设置网关路由：
+	       使用命令查看路由表信息：netstat -r 
+	       default 项是localost或者正确的网关ip，那么应该是正确的；
+	       如果不正确，使用命令：route add default gw 网关ip 添加正确的网关ip
+                删除错误的路由： route add default gw 网关ip
+       设置好后，ping www.baidu.com 能ping通，说明成功解决，
+       如果不能ping通，报错：ping www.baidu.com unknow host.... 进行第3步，设置DNS
+       注意： 设置路由的操作在重启电脑后会失效，想要重启不失效，可以用命令-- vim /etc/rc.local ，
+              在最后添加相应的route命令
+
+       3. 设置DNS域名解析:
+       vim /etc/resplv.conf 
+
+       添加以下内容：
+           nameserver 202.106.0.20
+           nameserver 202.106.196.115
+       重启网卡：service network restart
+       ping www.baidu.com 能ping通，说明成功解决。
