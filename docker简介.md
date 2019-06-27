@@ -85,7 +85,11 @@
 		
 		镜像加载拷贝到服务器中：
 		docker load --input ./ubuntu18.tar
-		
+
+		docker容器和宿主机之前的文件拷贝：
+        docker cp 宿主机文件路径 容器名：容器内路径
+        docker cp 容器名：容器内路径 宿主机文件路径
+
 		容器自动重启：
 		docker run --restart=always  （启动容器运行时加always参数）
 		docker update --restart=always <CONTAINER ID>（已经运行的容器update）

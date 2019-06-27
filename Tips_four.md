@@ -1,3 +1,38 @@
+# 六十七： 进程管理工具 -- supervisor
+**supervisor有网页版可视化管理界面，ip是布置supervisor工具的服务器ip,端口是默认端口3999**
+
+	Supervisord是用Python实现的一款非常实用的进程管理工具。supervisord会帮你把管理的应用程序转成
+    daemon程序，而且可以方便的通过命令开启、关闭、重启等操作，而且它管理的进程一旦崩溃会自动重启，这
+    样就可以保证程序执行中断后的情况下有自我修复的功能。
+
+	--> 安装supervisor: 可以下载安装包安装，也可以直接pip安装
+	--> 两个类型的命令：supervisord和supercisorctl（安装完成后在/user/bin下）
+	
+	    配置supervisord: 
+	    执行：echo_supervisord_conf > /etc/supervisord.conf 
+	        （默认配置，如果权限报错，可以在其他文件生成再拷贝到/etc/supervisord.conf文件中）
+             supervisord.conf文件中，可以配置日志文件最大值，和日志保存的文件数量等等，
+             但是自带的日志配置只支持日志大小轮询，不支持以时间来轮询，可搭配logrotate管理日志；
+
+	    添加需要守护的进程program：在supervisord.conf文件的最后加上以下代码：
+          （也可以单独写一个配置进程的文件，包含进supercisord.conf文件中）
+				[program:ice-0]   
+				command=icegridnode --Ice.Config=config.grid
+				directory=/package/second/new_image
+				user=root
+				autorestart=true
+				redirect_stderr=true
+				stdout_logfile=/package/second/new_image/log/ice_0.log
+				loglevel=info
+	     其中：ice-0是进程名
+	          directory是进程项目的地址
+	          command是进程项目启动命令
+	          autorestart默认自动重启
+	          stdout_logfile日志输出
+        启动命令： /usr/local/bin/supervisord -c /etc/supervisord.conf 
+
+        可以登录网址查看/管理 supervisor 运行状态：
+             http://服务器ip:3999   (账号密码在supervisord.conf文件中有配置)
 # 六十六： linux日志文件总管 -- logrotate（自动备份/轮询日志输出文件）
 **logrotate可以自动对日志进行截断（或轮循）、压缩以及删除旧的日志文件，旧日志也可以通过电子邮件发送**
 ## 1. 创建 配置文件 -- touch /etc/logrotate.d/super_log
@@ -169,6 +204,17 @@
 	c. ice均衡负载的配置，icegrid可以配置多个节点，节点配置易错，节点启动文件.xml文件配置，主节点config.grid、子节点node.conf配置 
 
 # 六十二： pycharm通过ssh搭配docker进行远程服务器调试
+	--> 进入容器
+	--> 修改root密码：passwd
+	--> 安装ssh服务：apt-get install openssh-server/apt-get install openssh-client
+	--> 修改ssh配置文件：vim /etc/ssh/sshd_config  :
+	
+		# PermitRootLogin prohibit-password # 默认打开禁止root用户使用密码登陆，需要将其注释
+		RSAAuthentication yes #启用 RSA 认证
+		PubkeyAuthentication yes #启用公钥私钥配对认证方式
+		PermitRootLogin yes #允许root用户使用ssh登录
+	
+	--> 重启sshd服务：/etc/init.d/ssh restart
 # 六十一： 如何动态获取mysql中一张表的字段名？
 **从mysql自带的information_schema数据库的COLUMNS表获取**
 
