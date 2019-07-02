@@ -1,5 +1,5 @@
 # 六十七： 进程管理工具 -- supervisor
-**supervisor有网页版可视化管理界面，ip是布置supervisor工具的服务器ip,端口是默认端口3999**
+**supervisor有网页版可视化管理界面，ip是布置supervisor工具的服务器ip,端口是默认端口3999，通过http://ip:3999可访问配置的supervisor**
 
 	Supervisord是用Python实现的一款非常实用的进程管理工具。supervisord会帮你把管理的应用程序转成
     daemon程序，而且可以方便的通过命令开启、关闭、重启等操作，而且它管理的进程一旦崩溃会自动重启，这
@@ -204,17 +204,31 @@
 	c. ice均衡负载的配置，icegrid可以配置多个节点，节点配置易错，节点启动文件.xml文件配置，主节点config.grid、子节点node.conf配置 
 
 # 六十二： pycharm通过ssh搭配docker进行远程服务器调试
-	--> 进入容器
-	--> 修改root密码：passwd
-	--> 安装ssh服务：apt-get install openssh-server/apt-get install openssh-client
-	--> 修改ssh配置文件：vim /etc/ssh/sshd_config  :
-	
-		# PermitRootLogin prohibit-password # 默认打开禁止root用户使用密码登陆，需要将其注释
-		RSAAuthentication yes #启用 RSA 认证
-		PubkeyAuthentication yes #启用公钥私钥配对认证方式
-		PermitRootLogin yes #允许root用户使用ssh登录
-	
-	--> 重启sshd服务：/etc/init.d/ssh restart
+**pycharm必须是professional版本才能进行远程ssh调试**
+
+	第一步： docker容器配置ssh服务:
+	    --> 创建容器: docker run 命令（必须有外部映射端口 -p 参数，允许外部连接到容器）
+		--> 进入容器： docker exec -it 容器名 bash
+		--> 修改root密码：passwd
+		--> 安装ssh服务：apt-get install openssh-server/apt-get install openssh-client
+		--> 修改ssh配置文件：vim /etc/ssh/sshd_config  :
+		
+			# PermitRootLogin prohibit-password # 默认打开禁止root用户使用密码登陆，需要将其注释
+			RSAAuthentication yes #启用 RSA 认证
+			PubkeyAuthentication yes #启用公钥私钥配对认证方式
+			PermitRootLogin yes #允许root用户使用ssh登录
+		
+		--> 重启sshd服务：/etc/init.d/ssh restart
+
+	第二步： pycharm配置远程调试：
+	    -->点击pycharm左上方file - setting - project interpreter ；
+		--> 新加一个远程的虚拟环境，点击右上角类似设置按钮的按钮下的 add；
+		--> 配置远程地址：点击ssh interpreter , 填入 ip、端口、用户名，点击next；
+		--> 输入远程服务器用户名的密码，点击next；
+		--> 配置本地代码和远程代码的映射： 点击第二个输入框右边的文件夹图标、配置本地和远程代码路径；
+		--> 配置完成后，确认，点击overwrite（本地代码更新会更新远程服务器的代码）；
+        也可以在tools - deployment - configration中配置，配置完后，再设置远程虚拟环境
+
 # 六十一： 如何动态获取mysql中一张表的字段名？
 **从mysql自带的information_schema数据库的COLUMNS表获取**
 
