@@ -93,6 +93,15 @@
 		容器自动重启：
 		docker run --restart=always  （启动容器运行时加always参数）
 		docker update --restart=always <CONTAINER ID>（已经运行的容器update）
+
+        查看容器日志：
+        docker logs 容器名
+
+        镜像更新/上传/拉取（已配置远程仓库，否则需要docker login登录）：
+		  更新命令： docker commit <容器名或id> <镜像名或id:标签>
+		  提交命令：docker push <镜像名或id:标签>
+		  拉取docker命令： docker pull <镜像名或id:标签>
+
 ## d. docker hub仓库 和daocloud镜像仓库
 **docker hub是国外的平台，连接速度可能比较慢，所以国内一般在daocloud管理镜像**
 
@@ -110,3 +119,13 @@
 	
 	从服务器拉取镜像并运行容器：
 	docker run -p 4000:80 daocolud.io/my_team/seconds_docker:v1
+
+## e. 私有仓库（拉取docker ce或者ee版本镜像，在服务器启动、创建私有docker仓库）：
+
+	Docker配置远程仓库地址（访问远程私有仓库）：
+             vim /etc/docker/daemon.json 
+		将以下代码中的ip改成需要连接的远程仓库地址：
+		{"registry-mirrors": ["https://3c9ywpon.mirror.aliyuncs.com"]，"insecure-registries":["192.168.3.153:5000"]}
+	    "registry-mirrors"是配置镜像源（国外镜像源网速慢，可配置国内镜像源，阿里镜像源等）；
+	    如果有多个私有仓库要链接，将其他私有仓库地址添加到这个json文件"insecure-registries"的值的列表中就行；
+	    重启docker -- systemctl restart docker
