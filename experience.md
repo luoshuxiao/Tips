@@ -51,6 +51,7 @@ docker cp 容器名：容器内路径 宿主机文件路径
 ## Vim中跳到底部： G
 ## Vim中替换字符： :%s/1/2 （把所有的1替换成2）
 ## vim中光标跳转到指定行： 行数gg 
+## vim删除当前行： dd
 
 ## 容器更新备份成新镜像： docker commit 容器 新镜像名
 
@@ -139,6 +140,7 @@ docker cp 容器名：容器内路径 宿主机文件路径
          将Unattended-Upgrade::Allowed-Origins里面的所有选项注释掉，关闭自动更新功能，
          然后重新装需要的nvidia版本，装成功后重启电脑；
 
+         或者输入命令 ： echo "nvidia-390 hold" | sudo dpkg --set-selections
 ## linux只能访问内网，不能访问外网（可以设置成这种模式）：
 **现象：ping www.baidu.com ，ping不通，但是ping内网能ping通**
 
@@ -177,3 +179,10 @@ docker cp 容器名：容器内路径 宿主机文件路径
            nameserver 202.106.196.115
        重启网卡：service network restart
        ping www.baidu.com 能ping通，说明成功解决。
+
+## 国内镜像源：
+	  阿里云 http://mirrors.aliyun.com/pypi/simple/ 
+	  中国科技大学 https://pypi.mirrors.ustc.edu.cn/simple/ 
+	  豆瓣(douban) http://pypi.douban.com/simple/ 
+	  清华大学 https://pypi.tuna.tsinghua.edu.cn/simple/ 
+	  中国科学技术大学 http://pypi.mirrors.ustc.edu.cn/simple/
