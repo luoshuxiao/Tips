@@ -18,6 +18,9 @@ easy_install  -i http://192.168.3.118:8080 violation_1625
 docker save -o <保存路径> <镜像名称:标签>
 docker save -o ./ubuntu18.tar ubuntu:18.04
 
+## 镜像重命名：
+docker tag 镜像id 仓库：标签
+
 ## 镜像加载拷贝到服务器中：
 docker load --input ./ubuntu18.tar
 
@@ -46,8 +49,9 @@ docker cp 容器名：容器内路径 宿主机文件路径
 
 ## 查看显存： nvidia-smi （加-l 1 表示每一秒钟刷新一次）
 
-## 查看文件：tail -20 filename  (打印filename文件的后20行)
-
+## 查看文件：
+        tail -20 filename  (打印filename文件的后20行)
+        tail -20f filname (滚定打印文件的最后20行，实时更新)
 ## Vim中跳到底部： G
 ## Vim中替换字符： :%s/1/2 （把所有的1替换成2）
 ## vim中光标跳转到指定行： 行数gg 
@@ -87,7 +91,7 @@ docker cp 容器名：容器内路径 宿主机文件路径
         启动命令： /usr/local/bin/supervisord -c /etc/supervisord.conf 
 
         可以登录网址查看/管理 supervisor 运行状态：
-             http://服务器ip:3999   (账号密码在supervisord.conf文件中有配置)
+             http://服务器ip:端口   (账号密码端口在supervisord.conf文件中有配置)
 ## Docker配置远程仓库地址：vim /etc/docker/daemon.json 
 	将以下代码中的ip改成需要连接的远程仓库地址：
 	{"registry-mirrors": ["https://3c9ywpon.mirror.aliyuncs.com"]，"insecure-registries":["192.168.3.153:5000"]}
@@ -111,6 +115,7 @@ docker cp 容器名：容器内路径 宿主机文件路径
     查看显卡驱动： nvidia-smi
     查看显卡驱动（每秒刷新）：nvidia-smi -l 1
     查看系统加载的某个模块以及相关依赖项： lsmod | grep -i nvidia (显卡驱动)
+    查看使用的编码字符集： locale
 ## linux显卡卸载/安装：
 	卸载：方式一：
 	        sudo ./NVIDIA-Linux-x86_64-418.56.run --uninstall
