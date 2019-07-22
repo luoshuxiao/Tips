@@ -11,9 +11,6 @@
 docker run -it -d --privileged=true  -v /package:/package  --name test -p 10022:22  192.168.3.153:5000/lsx:2.0  /bin/bash
 docker run -itd --privileged=true  -v /package:/package  --name tt  192.168.3.153:5000/lsx:2.0  /bin/bash
 
-## 安装算法包(egg格式)：
-easy_install  -i http://192.168.3.118:8080 violation_1625
-
 ## 镜像打包成tar文件：
 docker save -o <保存路径> <镜像名称:标签>
 docker save -o ./ubuntu18.tar ubuntu:18.04
