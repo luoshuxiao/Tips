@@ -1,3 +1,38 @@
+# 六十八： python运行文件代码参数的区别：
+**python运行文件时往往有三种方式：-u,-m,直接运行，可以通过python --help查看所有信息**
+### 方式一（-m）：将一个模块当做脚本来运行；
+	当前脚本所在的路径不会加入到sys.path列表中，但是sys.modules字典中的__main__
+	路径是绝对路径，同时，还引入了runpy和pkgutil两个模块；
+	
+	runpy模块用途是定位并执行该模块，即实现命令行 -m 执行python模块的功能；
+	pkgutil模块用途是获取包里面的所有模块列表，pkgutil.get_data()可读取包内
+	任何文件内容；
+
+    需要注意的是：在使用-m方式时，执行的脚本只用写文件名，不用写.py后缀；
+### 方式二（直接运行脚本）：
+	影响sys.path这个值，直接启动是把当前脚本路径加载到sys.path列表中，但是
+	sys.modules字典中的__main__的路径不是绝对路径，是脚本名称；
+
+    模块导入机制：
+    模块的搜索路径保存在sys.path列表中，如果路径不存在其中，可以写代
+    码加进去sys.path.append() ；
+    所有加载到内存中的模块都存在sys.modules字典中；
+
+    当import一个模块的时候，首先会在这个字典中查找是否已经加载了目标模块，如果已
+    经加载，则将模块的名字加入到正在调用import的模块的local命名空间，也就是
+    < module >.__dict__中，如果没有，则从 sys.path 查找，找到后载入内存，并加入
+    到 sys.modules 字典，名称也将导入到当前模块的 Local 命名空间
+### 方式三（-u）：将一个模块当做脚本来运行；
+	默认情况下，标准错误（std.err）不缓存直接打印在屏幕，标准输出（std.out）需要
+	缓存后再输出到屏幕；加上-u参数运行脚本，让脚本标准输出不缓存直接打印在屏幕上；
+
+	sys.stdout.write("stdout1")
+	sys.stderr.write("stderr1")
+	sys.stdout.write("stdout2")
+	sys.stderr.write("stderr2")
+	直接运行的输出顺序：stderr1 stderr2 stdout1 stdout2
+    加上-u参数运行的输出顺序：stdout1 stderr1 stdout2 stderr2
+    
 # 六十七： 进程管理工具 -- supervisor
 **supervisor有网页版可视化管理界面，ip是布置supervisor工具的服务器ip,端口是默认端口3999，通过http://ip:3999可访问配置的supervisor**
 
@@ -207,10 +242,10 @@
 **pycharm必须是professional版本才能进行远程ssh调试**
 
 	第一步： docker容器配置ssh服务:
-	    --> 创建容器: docker run 命令（必须有外部映射端口 -p 参数，允许外部连接到容器）
+	    --> 创建容器: docker run 命令（必须有外部映射端口 -p 参数，允许外部连接到容器内部22端口）
 		--> 进入容器： docker exec -it 容器名 bash
 		--> 修改root密码：passwd
-		--> 安装ssh服务：apt-get install openssh-server/apt-get install openssh-client
+		--> 安装ssh服务（已安装则不需要）：apt-get install openssh-server/apt-get install openssh-client
 		--> 修改ssh配置文件：vim /etc/ssh/sshd_config  :
 		
 			# PermitRootLogin prohibit-password # 默认打开禁止root用户使用密码登陆，需要将其注释
