@@ -1,5 +1,6 @@
 ## 模块：
 ### logging -- 日志模块
+### struct -- 数据的打包/解包（二进制）
 ### textwrap -- 字符串文本样式处理模块
 ### configparser -- 读取配置文件（配置文件中将一些参数可配置化）
 ### traceback -- 捕获、打印全面的异常信息
@@ -188,3 +189,7 @@ docker cp 容器名：容器内路径 宿主机文件路径
 	  豆瓣(douban) http://pypi.douban.com/simple/ 
 	  清华大学 https://pypi.tuna.tsinghua.edu.cn/simple/ 
 	  中国科学技术大学 http://pypi.mirrors.ustc.edu.cn/simple/
+
+## 编码问题：
+
+PYTHONIOENCODING=utf-8 nohup python server.py &

@@ -77,6 +77,8 @@
         进入容器： docker exec -it e1066fe2db35 /bin/bash 
                   docker exec 是docker镜像的连接命令，类似ssh一样
 ## c. 相关命令
+        查看容器详细信息：docker inspect 容器名
+
         查看已有容器：docker ps (正在运行的)
                     docker ps -a (所有容器，包括停止的)
 		镜像打包成tar文件：
