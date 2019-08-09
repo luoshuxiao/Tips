@@ -245,104 +245,11 @@
 ### d. 重构\__new\__方法，返回其他类的实例化对象
     如果__new__方法返回其他类的实列对象，那么只会调用被返回对象的所属类的__init__方法。
 
-
-# 四十一： python实现简单的socket通信
-**epoll/poll/select能提高非阻塞式通信效率，windows上只有select**
-## 1. 阻塞式通信：
-	服务器端：
-	import socket
-	server = socket.socket() # 创建套接字对象
-	server.bind(('10.7.187.61',8080)) # 绑定端口
-	server.listen(100) # 监听服务
-	while True:
-	   conversation,address = server.accept() # 接受客户端请求，建立会话并和请求地址一并返回
-	   cli_data = conversation.recv(1024) # 接受并缓存客户端发送的二进制数据
-	   message = input('输入发送到客户端的数据：')
-	   conversation.send(message.encode(encoding='utf-8')) # 向客户端发送二进制数据
-	   # conversation.close()
-
-	客户端：
-	import socket
-	client = socket.socket() # 创建客户端对象
-	client.connect(('10.7.1187.61',8080)) # 连接服务端
-	while True:  # 一直开启客户端
-	   n = input('向服务端发送消息：') 
-	   client.send(n.encode('utf-8')) # 向服务端发送消息
-	   server_data = client.recv(1024)  # 缓存并接受服务端发送的消息 
-## 2. 非阻塞式通信：
-	服务器端（客户端类似阻塞式）：
-	import socket
-	server = socket.socket()
-	server.setblocking(False)  # 设置非阻塞式通信
-	server.bind(('10.7.168.61', 8000))
-	server.listen(100)
-	cli_con = []
-	while True:
-	   try:
-	      conversation,addr = server.accept()  # 需要有客户端连接，如果没有连接，会报BlockingIOError错
-	      cli_con.append((conversation,addr))
-	   except:
-	      pass
-	   for conversation,addr in cli_con:
-	      try:
-	        client_recv = conversation.recv(1024)
-	        if client_recv:
-	           print(f'客户端信息：{client_recv}')
-	           message = input('输入信息：回应客户端：')
-	           conversation.send(message.encode(encoding='utf8'))
-	        else:
-	            client_recv.close()
-	            cli_con.remove((conversation,addr))
-	      except:
-	        pass
-
 # 四十： django异步请求框架：celery
 
 
 # 三十九： 发布系统设计
-# 三十八： 系统定时任务：crontab -e 
-### a. 概论
-	linux系统是由crond系统服务来控制的，原本就有很多计划性工作，因此这个系统服务是默认
-	启动的，也为使用者提供了计划任务的命令： crontab 命令；
-	
-	crond是linux下周期性执行任务的一个守护进程，与windows下的计划任务类似，当安装完成
-	操作系统后默认会安装此服务，并且会自动启动crond进程，该进程会定期检查是否有要执行的
-	任务，如果有，则自动执行；
-### b. linux下两种任务调度方式 -- 系统任务调度和用户任务调度；
-**无论是那种方式，调度任务配置文件中每一行就可以对应配置一个调度任务**
 
-	系统任务调度 -- /etc/crontab文件中配置调度任务，只有root用户能用
-	比如写缓存数据到硬盘、日志清理等。在/etc目录下有一个crontab文件，就是系统任务调度配置文件；
-	
-	用户调度任务 -- crontab -e命令，所有用户都能用，任务自动写入/var/spool/cron/username中
-	用户自定义自己的调度任务；
-	
-		crontab [-u uaername] [-l/-e/-r] -- 
-			-u  ： 只有root能使用该选项，为指定的用户创建/移出crontab任务；
-			-e  : 编辑crontab任务(创建或者移出)
-			-l  ：查看crontab任务
-			-r  ：清空当前用户所有的crontab任务（移出某个任务，用-e）
-
-### c. 语法格式
-	crontab定时任务每项工作 (每行)的命令格式有六个栏位，前五个都是时间，最后一个是命令：
-		第一个栏位： 代表分钟（0-59或者*）
-		第二个栏位： 代表小时（0-23或者*）
-		第三个栏位： 代表日期（1-31或者*）
-		第四个栏位： 代表月份（1-12或者*）
-		第五个栏位： 代表星期（0-7或者*，其中0和7都代表星期天）
-		第六个栏位： 代表任务命令
-	
-		前五个栏位的辅助字符：
-		    *（星号） -- 代表任何时刻
-		   ，（逗号） -- 代表分割时段的意思（多个时刻）
-		    -（减号） -- 代表一段时间范围内
-		    /(斜线) -- 代表每隔单位时间间隔
-	
-		以下几个crontab定时任务：
-				0 3,6 * * * command   -- 3：00和6：00执行command
-				20 8-12 * * * command  -- 8点到12点之间的每小时20分斗进行command
-				*/5 * * * * command  -- 没五分钟进行一次command（0-59/5 * * * * command）
-	    注意： 日月和周循环不能同时出现，系统可能会错误的执行
 # 三十七： python是如何寻找包的,如何执行linux命令？
 **python内置的sys模块可以与python运行时的配置或资源交互，调用相关函数或变量，比如python解释器，os模块能实现基本的操作系统函数/变量功能，可以通过dir(os)/dir(sys)查看模块中的方法或变量**
 ### 1. sys模块 ：
