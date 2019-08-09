@@ -6,45 +6,6 @@
 ### 4. MVVM -- Model Views ViewsModel -- 模型层、模板层、视图函数
       将views和状态和抽象化，视图UI和业务逻辑分开，viewsmodel可以取出 Model 的数据同时帮忙处
       理 View 中由于需要展示内容而涉及的业务逻辑。
-# 二十八：\_\_str\__和\_\_repr\_\_函数
-**两个函数都是object基类中定义用于表达输出结果的魔法函数，开发者可自行重构，但是重构后返回类型必须要是str类型**
-
-应用举例：比方说，现在我想要创建一个类，用来表示人，实例化出一个人的对象，我想用人的名字来代表这个人。直接打印这个对象就输出他的名字，而不是打印他的名字属性才输出名字，如何实现？
-         我们首先是创建人这个类，class Person,然后是给他初始化对象属性，可以有性别性别年龄等等，再实例化，a = Person('Susan'),如果就这样，那么print(a)的结果就是:
-<__main__.Person object at 0x0000000002422240>，输出结果是内存地址，所以在这
-         个时候，我们就要重构str或者是repr方法，也就是说： 当你想要直接打印一个实例化对象，输 出你想要的目标格式，就可以通过重构这两种方法，去实现你自己想要的格式，而不是输出python中object基类默认的内存地址输出格式。
-
-### 1. \__str\__函数
-**str将对象的显示格式转换成便于programmer读取的字符串形式**
-	
-	如果想要输出的显示结果非常友好，有利于用户查看，而不是输出对象的内存地址，可以重构str函数，
-	比如print函数，如果给print函数传入一个对象，执行过程是，print函数会默认调用该对象的类的
-	str方法，如果该类没有str方法，程序会查找repr方法，没有的话就在父类找，直到object基类，
-	如果找到了object，首先打出来str的返回值，也就是该对象在内存中的地址
-
-### 2. \__repr\__函数
-**repr将对象的显示格式转换为便于interpreter读取的字符串形式,可以通过eval()对对象进行表达**
-
-	如果想要输出程序能够读取和解析的字符串，可以重构这个repr方法，也就是说这个字符串可以通过eval
-	函数来当代码执行的输出格式
-
-### 3. 调用情况：
-	重构str函数： 当程序直接输出显示对象时，依然输出内存地址，通过print打印显示对象时，输出str重构的格式
-	重构repr函数： 程序直接输出显示和通过print打印输出的结果，都是repr重构的格式，还有就是当再程序开发
-	             过程中，需要通过这个输出进行代码交互的时候，需要用repr函数
-注意：一般情况下，只考虑输出结果给用户，重构两个中的任何一个都是可以的，
-          当我们想所有环境下都统一显示的话，可以重构\__repr\__方法,
-          当对象比较复杂，有嵌套层次存在，要重构\__repr\__才有效，因为计算机
-          在\__repr\__中能识别出嵌套层的对象，从而将嵌套层的对象也格式化输出，而
-          \__str\__函数并不能做到这一点。
-
-![没有重构str或者repr函数时，对象的显示结果.png](https://upload-images.jianshu.io/upload_images/14977853-38e6e0ac4599b70d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-![重构str后对象的显示结果.png](https://upload-images.jianshu.io/upload_images/14977853-1672ab5bd14fc8a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-![重构repr后对象显示结果.png](https://upload-images.jianshu.io/upload_images/14977853-93c286ad5ec83e2a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-
-
 # 二十六：数据库删除操作（谨慎使用）：
         -- 删除数据库： drop database if exists 数据库名；
         -- 删除表：drop table 表名字 （完全删除去掉整张表）；
